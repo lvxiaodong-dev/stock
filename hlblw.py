@@ -1,6 +1,5 @@
 import akshare as ak 
 import pandas as pd
-import talib as ta
 import numpy as np
 from datetime import datetime
 from tqdm import tqdm
@@ -10,11 +9,11 @@ from MyTT import EMA, REF, FORCAST, BARSLAST
 def is_min_period_type(period):
     return period in ['1','5','15','30','60']
 
-period = '30'  #周期可选参数： 1 5 15 30 60 daily weekly monthly 
+period = 'daily'  #周期可选参数： 1 5 15 30 60 daily weekly monthly 
 
 # 设置查询数据的开始时间，结束时间
 start_date = '2021-01-01 00:00:00'
-end_date = '2023-8-30 15:00:00'
+end_date = '2023-9-09 15:00:00'
 # end_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 ##兼容开始时间、结束时间
@@ -25,16 +24,16 @@ if ~is_min_period_type(period):
     end_date = end_date.strftime("%Y%m%d")
 
 # 获取股票代码
-filepath = "A.csv"
-stock_codes = pd.read_csv(filepath, dtype=str, engine="python")['code'].values
+filepath = "CS.csv"
+df_a = pd.read_csv(filepath, dtype=str, engine="python")
+stock_codes = df_a['code'].values
 
-# 创建DataFrame存储结果
-results = pd.DataFrame(columns=['code']) 
+# 创建数组存储结果
+results = [df_a.columns.tolist()]
 
-print(start_date)
 with tqdm(total=len(stock_codes)) as progress_bar:
     # 遍历查找股票
-    for code in stock_codes:
+    for index,code in enumerate(stock_codes):
         progress_bar.update(1)
         try:
             # 获取数据
@@ -58,15 +57,13 @@ with tqdm(total=len(stock_codes)) as progress_bar:
             COND1 = FLAG & (~FLAG1)
             PERIOD_COND1 = BARSLAST(REF(COND1,1));
             COND2 = (CLOSE.iat[-1] < REF(CLOSE, PERIOD_COND1[-1] + 1)[-1]) & (TOWERC[-1] > REF(TOWERC, PERIOD_COND1[-1] + 1)[-1])
-            
-
+            results.append(df_a.loc[index].tolist())
             # 记录结果
             if COND1.iat[-1] & COND2:
-                results.loc[len(results.index)] = [code]
-                print('找到了背离----'+code+'----')
+                results.append(df_a.loc[index].tolist())
                 
         except Exception as e:
             print(e)
             
-# 一次性写入文件            
-results.to_csv('hlblw.csv', index=False)
+# 一次性写入文件
+np.savetxt(f'hlblw_{period}_{end_date}.txt', results, delimiter=',', fmt='%s')
