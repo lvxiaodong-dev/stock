@@ -57,7 +57,7 @@ with tqdm(total=len(stock_codes)) as progress_bar:
             COND1 = FLAG & (~FLAG1)
             PERIOD_COND1 = BARSLAST(REF(COND1,1));
             COND2 = (CLOSE.iat[-1] < REF(CLOSE, PERIOD_COND1[-1] + 1)[-1]) & (TOWERC[-1] > REF(TOWERC, PERIOD_COND1[-1] + 1)[-1])
-            results.append(df_a.loc[index].tolist())
+            
             # 记录结果
             if COND1.iat[-1] & COND2:
                 results.append(df_a.loc[index].tolist())
