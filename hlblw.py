@@ -24,7 +24,7 @@ if ~is_min_period_type(period):
     end_date = end_date.strftime("%Y%m%d")
 
 # 获取股票代码
-filepath = "CS.csv"
+filepath = "A.csv"
 df_a = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_a['code'].values
 
