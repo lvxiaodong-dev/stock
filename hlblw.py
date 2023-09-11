@@ -12,7 +12,7 @@ def is_min_period_type(period):
 period = 'daily'  #周期可选参数： 1 5 15 30 60 daily weekly monthly 
 
 # 设置查询数据的开始时间，结束时间
-start_date = '2021-01-01 00:00:00'
+start_date = '2022-01-01 00:00:00'
 end_date = '2023-9-09 15:00:00'
 # end_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
