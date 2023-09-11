@@ -66,4 +66,4 @@ with tqdm(total=len(stock_codes)) as progress_bar:
             print(e)
             
 # 一次性写入文件
-np.savetxt(f'hlblw_{period}_{end_date}.txt', results, delimiter=',', fmt='%s')
+np.savetxt(f'弘历背离王_{period}_{end_date}.txt', results, delimiter=',', fmt='%s')
