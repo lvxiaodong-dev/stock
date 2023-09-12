@@ -12,8 +12,8 @@ def is_min_period_type(period):
 period = 'daily'  #周期可选参数： 1 5 15 30 60 daily weekly monthly 
 
 # 设置查询数据的开始时间，结束时间
-start_date = '2022-01-01 00:00:00'
-end_date = '2023-9-09 15:00:00'
+start_date = '2022-08-29 00:00:00'
+end_date = '2023-08-29 00:00:00'
 # end_date = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 ##兼容开始时间、结束时间
@@ -29,7 +29,7 @@ df_a = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_a['code'].values
 
 # 创建数组存储结果
-results = [df_a.columns.tolist()]
+results = []
 
 with tqdm(total=len(stock_codes)) as progress_bar:
     # 遍历查找股票
@@ -63,7 +63,7 @@ with tqdm(total=len(stock_codes)) as progress_bar:
                 results.append(df_a.loc[index].tolist())
                 
         except Exception as e:
-            print(e)
+            pass
             
 # 一次性写入文件
 np.savetxt(f'弘历背离王_{period}_{end_date}.txt', results, delimiter=',', fmt='%s')
