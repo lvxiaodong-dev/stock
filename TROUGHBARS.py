@@ -1,12 +1,8 @@
 import numpy as np
 import akshare as ak
  
-ZIG_STATE_START = 0
-ZIG_STATE_RISE = 1
-ZIG_STATE_FALL = 2
- 
- 
 df = ak.stock_zh_a_hist(symbol='600257', start_date=20220101, end_date=20230901, period='daily', adjust="qfq")
+
 
 def ZIG(df, N):
     ZIG_STATE_START = 0
@@ -16,7 +12,6 @@ def ZIG(df, N):
     k = df["收盘"]
     d = df['日期']
 
-
     peer_i = 0
     candidate_i = None
     scan_i = 0
@@ -24,7 +19,6 @@ def ZIG(df, N):
     z = np.zeros(len(k))
     state = ZIG_STATE_START
     while True:
-        #print(peers)
         scan_i += 1
         if scan_i == len(k) - 1:
             # 扫描到尾部
@@ -51,7 +45,7 @@ def ZIG(df, N):
                         peer_i = scan_i
                         peers.append(peer_i)
             break
- 
+        
         if state == ZIG_STATE_START:
             if k[scan_i] >= k[peer_i] * (1 + N):
                 candidate_i = scan_i
@@ -75,6 +69,7 @@ def ZIG(df, N):
                 peers.append(peer_i)
                 state = ZIG_STATE_RISE
                 candidate_i = scan_i
+        
     
     #线性插值， 计算出zig的值            
     for i in range(len(peers) - 1):
@@ -86,6 +81,25 @@ def ZIG(df, N):
         for j in range(peer_end_i - peer_start_i +1):
             z[j + peer_start_i] = start_value + a*j
     
+    
+
     return [df['收盘'][i] for i in peers]
     
-ZIG(df, 0.05)
+
+def TROUGHBARS(df, N, M):
+    ZIG_vals = ZIG(df, N) # 调用ZIG函数获取转折点
+    troughbars = np.zeros(len(df))
+    trough_count = 0
+    
+    for i in range(len(ZIG_vals)-1):
+        if ZIG_vals[i] > ZIG_vals[i+1]: # 找到谷底
+            trough_count += 1
+            if trough_count <= M:
+                start_i = df[df['收盘'] == ZIG_vals[i]].index[0] 
+                for j in range(start_i, len(df)):  
+                    troughbars[j] = trough_count 
+
+    return troughbars
+
+print(ZIG(df, 0.05))
+print(TROUGHBARS(df, 0.05, 1))
