@@ -1,12 +1,8 @@
 import numpy as np
 import akshare as ak
+from MyTT import EMA, REF, FORCAST, BARSLAST
  
-ZIG_STATE_START = 0
-ZIG_STATE_RISE = 1
-ZIG_STATE_FALL = 2
- 
- 
-df = ak.stock_zh_a_hist(symbol='600257', start_date=20220101, end_date=20230901, period='daily', adjust="qfq")
+df = ak.stock_zh_a_hist(symbol='600257', start_date=20220101, end_date=20230913, period='daily', adjust="qfq")
 
 def ZIG(df, N):
     ZIG_STATE_START = 0
@@ -64,7 +60,7 @@ def ZIG(df, N):
                 candidate_i = scan_i
             elif k[scan_i] <= k[candidate_i]*(1-N):
                 peer_i = candidate_i
-                peers.append(peer_i)
+                # peers.append(peer_i)
                 state = ZIG_STATE_FALL
                 candidate_i = scan_i
         elif state == ZIG_STATE_FALL:
@@ -86,6 +82,28 @@ def ZIG(df, N):
         for j in range(peer_end_i - peer_start_i +1):
             z[j + peer_start_i] = start_value + a*j
     
-    return [df['收盘'][i] for i in peers]
+    # print([df['日期'][i] for i in peers])
+
+    # print([df['收盘'][i] for i in peers])
+
+
+    result = [False] * len(k)
+    for i in peers:
+        result[i] = True
+    return result
     
-ZIG(df, 0.05)
+AA = ZIG(df, 0.05)
+BB = REF(ZIG(df, 0.05), 1)
+print(AA)
+print(BB)
+result = []
+prev = -1
+for i, v in enumerate(AA):
+    if v:
+        prev = i 
+        result.append(0)
+    else:
+        result.append(i - prev)
+
+# print(result)
+# print(REF(ZIG(df, 0.05),1))
