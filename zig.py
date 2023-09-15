@@ -1,6 +1,6 @@
 import numpy as np
 
-def ZIG(df, K, N):
+def zig(df, K, N):
     ZIG_STATE_START = 0
     ZIG_STATE_RISE = 1
     ZIG_STATE_FALL = 2
@@ -89,8 +89,8 @@ def ZIG(df, K, N):
 
 
 
-# AA = ZIG(df, 3, 0.05)
-# BB = REF(ZIG(df, 3, 0.05), 1)
+# AA = zig(df, 3, 0.05)
+# BB = REF(zig(df, 3, 0.05), 1)
 
 # print(AA)
 # print(BB)
