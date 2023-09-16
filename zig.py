@@ -1,96 +1,130 @@
-import numpy as np
+import math
 
-def zig(df, K, N):
-    ZIG_STATE_START = 0
-    ZIG_STATE_RISE = 1
-    ZIG_STATE_FALL = 2
 
-    if K == 0:
-        K = df['开盘']
-    elif K == 1:
-        K = df['最高']
-    elif K == 2:
-        K = df['最低']
-    elif K == 3:
-        K = df['收盘']
-    else:
-        print('传参有误')
-        pass
+def IsNumber(value):
+        if not isinstance(value,(int,float)) :
+            return False
+        if (math.isnan(value)):
+            return False
+        return True
 
-    peer_i = 0
-    candidate_i = None
-    scan_i = 0
-    peers = [0]
-    z = np.zeros(len(K))
-    state = ZIG_STATE_START
-    while True:
-        #print(peers)
-        scan_i += 1
-        if scan_i == len(K) - 1:
-            # 扫描到尾部
-            if candidate_i is None:
-                peer_i = scan_i
-                peers.append(peer_i)
-            else:
-                if state == ZIG_STATE_RISE:
-                    if K[scan_i] >= K[candidate_i]:
-                        peer_i = scan_i
-                        peers.append(peer_i)
-                    else:
-                        peer_i = candidate_i
-                        peers.append(peer_i)
-                        peer_i = scan_i
-                        peers.append(peer_i)
-                elif state == ZIG_STATE_FALL:
-                    if K[scan_i] <= K[candidate_i]:
-                        peer_i = scan_i
-                        peers.append(peer_i)
-                    else:
-                        peer_i = candidate_i
-                        peers.append(peer_i)
-                        peer_i = scan_i
-                        peers.append(peer_i)
-            break
- 
-        if state == ZIG_STATE_START:
-            if K[scan_i] >= K[peer_i] * (1 + N):
-                candidate_i = scan_i
-                state = ZIG_STATE_RISE
-            elif K[scan_i] <= K[peer_i] * (1 - N):
-                candidate_i = scan_i
-                state = ZIG_STATE_FALL
-        elif state == ZIG_STATE_RISE:
-            if K[scan_i] >= K[candidate_i]:
-                candidate_i = scan_i
-            elif K[scan_i] <= K[candidate_i]*(1-N):
-                peer_i = candidate_i
-                peers.append(peer_i)
-                state = ZIG_STATE_FALL
-                candidate_i = scan_i
-        elif state == ZIG_STATE_FALL:
-            if K[scan_i] <= K[candidate_i]:
-                candidate_i = scan_i
-            elif K[scan_i] >= K[candidate_i]*(1+N):
-                peer_i = candidate_i
-                peers.append(peer_i)
-                state = ZIG_STATE_RISE
-                candidate_i = scan_i
+def CreateArray(count, value=float('nan')) :
+        if count<=0 :
+            return []
+        else :
+            return [value]*count
+        
+def GetFirstVaildIndex(data):
+    count=len(data)
+    for i in range(count):
+        if (IsNumber(data[i])):
+            return i
     
-    #线性插值， 计算出zig的值            
-    for i in range(len(peers) - 1):
-        peer_start_i = peers[i]
-        peer_end_i = peers[i+1]
-        start_value = K[peer_start_i]
-        end_value = K[peer_end_i]
-        a = (end_value - start_value)/(peer_end_i - peer_start_i)# 斜率
-        for j in range(peer_end_i - peer_start_i +1):
-            z[j + peer_start_i] = start_value + a*j
-    return z
+    return count
+
+def ZIG_Calculate(data, dRate):
+    nDataCount=len(data)
+    dest=CreateArray(nDataCount)
+    m=GetFirstVaildIndex(data)
+    i, lLastPos, lState, j = 0, 0, 0, 0
+    dif = 0
+    lLastPos, lState = m, m
+    for i in range(m+1, nDataCount-1) :
+        if (lState==m):
+            break
+        if abs(data[i] - data[m]) * 100 >= dRate*data[m]:
+            if (data[i]>data[m]) :
+                lState=i
+            else :
+                lState=-1
+        else :
+            lState=m
+    
+    for i in range(i, nDataCount-1) :
+        if (data[i] >= data[i - 1] and data[i] >= data[i + 1]) :
+            if (lState<0) :
+                if ((data[i] - data[-lState]) * 100<dRate*data[-lState]) :
+                    continue
+                else :
+                    j = -lState
+                    dif = (data[lLastPos] - data[j]) / (-lState - lLastPos)
+                    dest[j]=data[-lState]
+                    j-=1
+                    for j in range(j,lLastPos-1,-1):    # for (; j >= lLastPos; j--)
+                        dest[j]=data[-lState] + (-lState - j)*dif
+                    lLastPos = -lState
+                    lState = i
+            
+            elif (data[i]>data[lState]):
+                lState = i
+        elif (data[i] <= data[i - 1] and data[i] <= data[i + 1]) :
+            if (lState>0) :
+                if ((data[lState] - data[i]) * 100<dRate*data[lState]):
+                    continue
+                else :
+                    j = lLastPos
+                    dif = (data[lState] - data[j]) / (lState - lLastPos)
+                    dest[j]=data[lLastPos]
+                    j+=1
+                    for j in range(j,lState+1) :
+                        dest[j]=data[lLastPos] + (j - lLastPos)*dif
+                    lLastPos = lState
+                    lState = -i
+            elif (data[i]<data[-lState]) :
+                lState = -i
+
+    if (abs(lState) >= nDataCount - 2) :
+        if (lState>0 and data[nDataCount - 1] >= data[lState]) :
+            lState = nDataCount - 1
+        if (lState<0 and data[nDataCount - 1] <= data[-lState]) :
+            lState = 1 - nDataCount
+
+    if (lState>0) :
+        j = lLastPos
+        dif = (data[lState] - data[j]) / (lState - lLastPos )
+        dest[j]=data[lLastPos]
+        j+=1
+        for j in range(j, lState+1) :
+            dest[j]=data[lLastPos] + (j - lLastPos)*dif
+    else :
+        j = -lState
+        dif = (data[lLastPos] - data[j]) / (-lState - lLastPos)
+        dest[j]=data[-lState]
+        j-=1
+        for j in range(j,lLastPos-1,-1) : # for (; j >= lLastPos; j--)
+            dest[j]=(data[-lState] + (-lState - j)*dif)
+    
+    lState = abs(lState)
+    if (lState<nDataCount - 1) :
+        if (data[nDataCount - 1] >= data[lState]) :
+            j = lState
+            dif = (data[nDataCount - 1] - data[j]) / (nDataCount - lState)
+            dest[j]=(data[lState])
+            j+=1
+            for j in range(j, nDataCount):
+                dest[j]=(data[lState] + (j - lState)*dif)
+        else :
+            j = nDataCount - 1
+            dif = (data[lState] - data[j]) / (nDataCount - lState)
+            dest[j]=(data[nDataCount - 1])
+            j-=1
+            for j in range(j, lState-1, -1) : #for (; j >= lState; j--)
+                dest[j]=(data[nDataCount - 1] + (nDataCount - j)*dif)
+
+    return dest
 
 
-
-# AA = zig(df, 3, 0.05)
-# BB = REF(zig(df, 3, 0.05), 1)
-
-# print(AA)
-# print(BB)
+def ZIG(df,K,N) :
+        if K == 0:
+            K = df['开盘']
+        elif K == 1:
+            K = df['最高']
+        elif K == 2:
+            K = df['最低']
+        elif K == 3:
+            K = df['收盘']
+        else:
+            print('传参有误')
+            return []
+        
+        return ZIG_Calculate(K, N)
