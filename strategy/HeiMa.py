@@ -1,14 +1,14 @@
 import sys
+from strategy.Strategy import Strategy
 sys.path.append('../libs')
 from MyTT import REF,LLV,HHV,LLV,SMA,AVEDEV,MA
 from libs.zig import ZIG
 from libs.troughbars import TROUGHBARS
 
 
-class HeiMa:
+class HeiMa(Strategy):
     def __init__(self, name, df):
-        self.name = name
-        self.df = df
+        super().__init__(name, df)
 
     def exec(self):
         # 向量化计算指标

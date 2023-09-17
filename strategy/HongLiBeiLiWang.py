@@ -1,10 +1,10 @@
 import pandas as pd
 from MyTT import EMA, REF, FORCAST, BARSLAST
+from strategy.Strategy import Strategy
 
-class HongLiBeiLiWang:
+class HongLiBeiLiWang(Strategy):
   def __init__(self, name, df):
-    self.name = name
-    self.df = df
+    super().__init__(name, df)
 
   def exec(self):
     # 向量化计算指标

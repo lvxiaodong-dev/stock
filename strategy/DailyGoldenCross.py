@@ -1,10 +1,10 @@
 import pandas as pd
 import talib as ta
+from strategy.Strategy import Strategy
 
-class DailyGoldenCross:
+class DailyGoldenCross(Strategy):
   def __init__(self, name, df):
-    self.name = name
-    self.df = df
+    super().__init__(name, df)
 
   def exec(self):
     # 计算日线MACD
