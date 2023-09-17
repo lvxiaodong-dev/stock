@@ -2,7 +2,11 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 
+
 filename = '黑马_黑马信号+掘底买点_daily_20230904.txt'
+# 设置持有期
+start_date = '20230904'  
+end_date = '20230915'
 
 # 股票代码列表
 codes = []
@@ -11,9 +15,7 @@ with open(filename,'r') as f:
     df = pd.DataFrame([line.split(',') for line in data.split('\n')]) 
     codes = df[0].values
 
-# 设置持有期
-start_date = '20230904'  
-end_date = '20230915'
+
 
 # 初始化存储每只股票的持有期回报率
 returns = []
