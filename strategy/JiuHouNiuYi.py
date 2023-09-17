@@ -9,28 +9,46 @@ class JiuHouNiuYi:
 
     def exec(self):
         df = self.df
+        CLOSE = df['收盘']
         # HMA1为21日惠姆可编程移动平均线,色为黄色,线宽为1
-        today_close = df['收盘'].iat[-1]
-        fourth_day_close = df['收盘'].iat[-5]
-        yesterday_close = df['收盘'].iat[-2]
-        fifth_day_close = df['收盘'].iat[-6]
+        df['HMA1'] = talib.WMA(2*talib.WMA(CLOSE,int(21/2)) - talib.WMA(CLOSE,21),int(21**0.5))
 
-        # 检查high_1条件
-        if today_close > fourth_day_close and yesterday_close < fifth_day_close:
-            high_1 = True
-        else:
-            high_1 = False
+        # HMA2为88日惠姆可编程移动平均线,色为品红,线宽为2  
+        df['HMA2'] = talib.WMA(2*talib.WMA(CLOSE,int(88/2)) - talib.WMA(CLOSE,88),int(88**0.5))
 
-        # 检查low_9条件
-        for k in range(1, 10):
-            if df['收盘'].iat[-k] >= df['收盘'].iat[-k-4]:
-                low_9 = False
-                break
+        # B1判断收盘价是否低于4日前收盘价  
+        df['B1'] = CLOSE < CLOSE.shift(4)
 
-        # 检查在过去的13天内是否出现过 low_9
-        if any(df['最低'][-14:] <= df['最低'].iat[-10]):
-            low_9_appeared = True
+        # NT0统计B1连续出现的天数
+        df['NT0'] = df['B1'].groupby((df['B1'] != df['B1'].shift()).cumsum()).cumsum() 
 
-        if high_1 and low_9_appeared:
+        # TJ21判断NT0是否等于9
+        df['TJ21'] = df['NT0'] == 9  
+
+        # TJ23判断上一周期NT0是否在0-8之间
+        df['TJ23'] = df['NT0'].shift(1).between(0,8)
+
+        # AY1计算最后显示的数字
+        # df['AY1'] = (df['TJ21'].shift(9) | df['TJ23'].shift(df['NT0'])).astype(int) * df['NT0']
+
+        # 画出AY1数字
+        #df.apply(lambda x: draw_number(x['AY1'],x['low'],x['AY1'],0,-15) if x['AY1'] > 0 and x['AY1'] < 9 else None, axis=1)
+
+        # A1判断收盘价是否高于4日前收盘价
+        df['A1'] = CLOSE > CLOSE.shift(4)  
+
+        # NT统计A1连续出现的天数
+        df['NT'] = df['A1'].groupby((df['A1'] != df['A1'].shift()).cumsum()).cumsum()
+
+        # BB判断触发条件
+        N = 10
+        df['BB'] = (df['NT0'].shift(1)==9) & (df['NT0'].shift(1)>=1) & (df['NT0'].shift(1)<=N) & (df['NT']==1) & (CLOSE > CLOSE.shift(4))
+
+        # 画出图标
+        #df.apply(lambda x: draw_icon(x['BB'],x['low']*0.97,5) if x['BB'] else None,axis=1) 
+
+        # 画出数字1
+        #df.apply(lambda x: draw_number(x['BB'],x['high'],1,0,15) if x['BB'] else None,axis=1)
+        if df['BB'].iat[-1]:
             return True
         return False

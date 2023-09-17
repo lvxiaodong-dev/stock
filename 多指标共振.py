@@ -33,7 +33,7 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
     # stock.use(WeeklyGoldenCross('周线金叉', weekly_df))
     # stock.use(HongLiBeiLiWang('弘历背离王', daily_df))
     # stock.use(HeiMa('黑马', daily_df))
-    # stock.use(JiuHouNiuYi('九牛转一', daily_df))
+    stock.use(JiuHouNiuYi('九牛转一', daily_df))
 
     try:
         stock.exec()
@@ -53,7 +53,7 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
 
 if len(result) > 0:
     strategyName = '_'.join(strategyName)
-    savepath = f'{end_date}_{strategyName}.txt';
+    savepath = f'dist/{end_date}_{strategyName}.txt';
     np.savetxt(savepath, result, delimiter=',', fmt='%s')
     print('选股结果保存成功！' + savepath)
 else:
