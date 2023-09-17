@@ -12,7 +12,7 @@ from strategy.HongLiBeiLiWang import HongLiBeiLiWang
 from strategy.HeiMa import HeiMa
 from strategy.JiuHouNiuYi import JiuHouNiuYi
 
-filepath = "csv/A.csv"
+filepath = "csv/CS.csv"
 df_a = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_a['code'].values
 
@@ -22,7 +22,7 @@ result = []
 strategyName = []
 
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
-    # 结束时间浮动3天，最近3天符合条件即可
+    # 结束时间浮动3天，最近3天符合条件即可, 若要精确到某一天，设置为1
     dynamic_days = 3
     # 设置选股开始时间和结束时间
     start_date = '20190101'
