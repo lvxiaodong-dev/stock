@@ -1,6 +1,8 @@
+import traceback
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from tqdm import tqdm
 from Stock import Stock
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
@@ -20,7 +22,7 @@ end_date = datetime.now().strftime("%Y%m%d")
 result = []
 strategyName = []
 
-for index,code in enumerate(stock_codes):
+for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
     # 实例化股票类
     stock = Stock(code, start_date, end_date)
     stock.debugger()
@@ -31,17 +33,15 @@ for index,code in enumerate(stock_codes):
     # stock.use(WeeklyGoldenCross('周线金叉', weekly_df))
     # stock.use(HongLiBeiLiWang('弘历背离王', daily_df))
     # stock.use(HeiMa('黑马', daily_df))
-    stock.use(JiuHouNiuYi('九牛转一', daily_df))
+    # stock.use(JiuHouNiuYi('九牛转一', daily_df))
 
-    stock.exec()
-    # try:
-    #     stock.exec()
-    # except Exception as e:
-    #     print(e)
-
-    # 符合的策略百分比
-    percentage = stock.true_percentage()
-    # print(f'执行 {code} 策略符合百分比为 {percentage}')
+    try:
+        stock.exec()
+        # 符合的策略百分比
+        percentage = stock.true_percentage()
+        # print(f'执行 {code} 策略符合百分比为 {percentage}')
+    except Exception as e:
+        traceback.print_exc()
 
     # 是否可以买
     is_buy = stock.is_buy()
