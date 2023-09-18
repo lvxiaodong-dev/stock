@@ -7,8 +7,10 @@ class WeeklyGoldenCross(Strategy):
     super().__init__(name, df, dynamic_day)
 
   def find(self):
+    CLOSE = self.CLOSE()
+
     # 计算周线MACD 
-    wk_macd_diff, wk_macd_dea, wk_macd_bar = ta.MACD(self.df['收盘'], fastperiod=26, slowperiod=52, signalperiod=13)
+    wk_macd_diff, wk_macd_dea, wk_macd_bar = ta.MACD(CLOSE, fastperiod=26, slowperiod=52, signalperiod=13)
     wk_macd_diff = wk_macd_diff.dropna()
     wk_macd_dea = wk_macd_dea.dropna()
 

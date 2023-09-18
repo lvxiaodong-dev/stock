@@ -8,7 +8,7 @@ class HongLiBeiLiWang(Strategy):
 
   def find(self):
     # 向量化计算指标
-    CLOSE = self.df['收盘']
+    CLOSE = self.CLOSE()
     A1 = FORCAST(EMA(CLOSE, 5), 6)
     A2 = FORCAST(EMA(CLOSE, 8), 6)
     A3 = FORCAST(EMA(CLOSE, 11), 6)

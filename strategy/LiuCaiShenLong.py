@@ -10,7 +10,7 @@ class LiuCaiShenLong(Strategy):
 
     def find(self):
         df = self.df
-        CLOSE = df['收盘']
+        CLOSE = self.CLOSE()
 
         N = 3
 

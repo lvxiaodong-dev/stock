@@ -18,3 +18,15 @@ class Strategy:
 
     def pop(self):
         self.df = self.df.iloc[:-1]
+
+    def OPEN(self):
+        return self.df['Open'] if self.us else self.df['开盘']
+    
+    def CLOSE(self):
+        return self.df['Close'] if self.us else self.df['收盘']
+    
+    def HIGH(self):
+        return self.df['High'] if self.us else self.df['最高']
+    
+    def LOW(self):
+        return self.df['Low'] if self.us else self.df['最低']

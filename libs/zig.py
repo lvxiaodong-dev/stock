@@ -114,16 +114,15 @@ def ZIG_Calculate(data, dRate):
     return dest
 
 
-def ZIG(df,K,N) :
-        us = True if 'Open' in df.columns else False
+def ZIG(self,K,N) :
         if K == 0:
-            K = df['Open'] if us else df['开盘']
+            K = self.OPEN()
         elif K == 1:
-            K = df['High'] if us else df['最高']
+            K = self.HIGH()
         elif K == 2:
-            K = df['Low'] if us else df['最低']
+            K = self.LOW()
         elif K == 3:
-            K = df['Close'] if us else df['收盘']
+            K = self.CLOSE()
         else:
             print('传参有误')
             return []
