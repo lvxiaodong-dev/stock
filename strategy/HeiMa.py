@@ -13,10 +13,10 @@ class HeiMa(Strategy):
     def find(self):
         # 向量化计算指标
         df = self.df
-        OPEN = df['开盘']
-        CLOSE = df['收盘']
-        HIGH = df['最高']
-        LOW = df['最低']
+        OPEN = df['Open'] if self.us else df['开盘']
+        CLOSE = df['Close'] if self.us else df['收盘']
+        HIGH = df['High'] if self.us else df['最高']
+        LOW = df['Low'] if self.us else df['最低']
 
         N = 9
         M1 = 3
@@ -32,3 +32,4 @@ class HeiMa(Strategy):
         if VAR2.iat[-2] < -110 and VAR3 == 1 and VAR4 == 1:
             return True
         return False
+    

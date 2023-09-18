@@ -14,6 +14,7 @@ class Strategy:
             result.append(self.find())
             self.pop()
         return any(result)
+        self.us = True if 'Open' in df.columns else False
 
     def pop(self):
         self.df = self.df.iloc[:-1]

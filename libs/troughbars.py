@@ -30,14 +30,15 @@ def ZIG(df, K, N):
     ZIG_STATE_RISE = 1
     ZIG_STATE_FALL = 2
 
+    us = True if 'Open' in df.columns else False
     if K == 0:
-        K = df['开盘']
+        K = df['Open'] if us else df['开盘']
     elif K == 1:
-        K = df['最高']
+        K = df['High'] if us else df['最高']
     elif K == 2:
-        K = df['最低']
+        K = df['Low'] if us else df['最低']
     elif K == 3:
-        K = df['收盘']
+        K = df['Close'] if us else df['收盘']
     else:
         print('传参有误')
         pass
