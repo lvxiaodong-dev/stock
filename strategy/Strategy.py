@@ -7,6 +7,7 @@ class Strategy:
         self.name = name
         self.df = df
         self.dynamic_day = dynamic_day
+        self.us = True if 'Open' in df.columns else False
 
     def exec(self):
         result = []
