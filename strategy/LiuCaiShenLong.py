@@ -12,7 +12,7 @@ class LiuCaiShenLong(Strategy):
         df = self.df
         CLOSE = df['收盘']
 
-        N = 1
+        N = 3
 
         MM_BASE = 50;
         MM_PERIOD = 50;

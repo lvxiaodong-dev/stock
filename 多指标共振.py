@@ -48,7 +48,7 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
         # stock.use(HongLiBeiLiWang('弘历背离王', ak.df, 3))
         # stock.use(HeiMa('黑马', ak.df, 3))
         # stock.use(JiuHouNiuYi('九牛转一', ak.df, 3))
-        stock.use(LiuCaiShenLong('六彩神龙', ak.df, 3))
+        stock.use(LiuCaiShenLong('六彩神龙', ak.df, 1))
 
     
         stock.exec()
