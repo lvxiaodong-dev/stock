@@ -38,7 +38,7 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
 
     try:
         ak = AkShare(code, start_date, end_date)
-        ak.stock_zh_a_hist_daily()
+        ak.get_stock_daily()
         # 实例化股票类
         stock = Stock(ak.df, ak.code)
         stock.debugger()

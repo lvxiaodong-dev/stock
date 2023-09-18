@@ -14,7 +14,7 @@ class AkShare:
 
     # 失败重试3次
     @retry.retry(exceptions=Exception, tries=3, delay=1)
-    def stock_zh_a_hist_daily(self):
+    def get_stock_daily(self):
         self.df = ak.stock_zh_a_hist(symbol=self.code, start_date=self.start_date, end_date=self.end_date, period='daily', adjust="qfq")
         return self.df
     
