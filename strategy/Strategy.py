@@ -14,19 +14,18 @@ class Strategy:
             result.append(self.find())
             self.pop()
         return any(result)
-        self.us = True if 'Open' in df.columns else False
 
     def pop(self):
         self.df = self.df.iloc[:-1]
 
     def OPEN(self):
-        return self.df['Open'] if self.us else self.df['开盘']
+        return self.df['开盘'] if '开盘' in self.df.columns else self.df['Open']
     
     def CLOSE(self):
-        return self.df['Close'] if self.us else self.df['收盘']
+        return self.df['收盘'] if '收盘' in self.df.columns else self.df['Close']
     
     def HIGH(self):
-        return self.df['High'] if self.us else self.df['最高']
+        return self.df['最高'] if '最高' in self.df.columns else self.df['High']
     
     def LOW(self):
-        return self.df['Low'] if self.us else self.df['最低']
+        return self.df['最低'] if '最低' in self.df.columns else self.df['Low']
