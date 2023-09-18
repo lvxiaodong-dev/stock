@@ -5,14 +5,13 @@ from datetime import datetime
 from tqdm import tqdm
 from AkShare import AkShare
 from Stock import Stock
-from libs.util import generate_dates
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
 from strategy.HongLiBeiLiWang import HongLiBeiLiWang
 from strategy.HeiMa import HeiMa
 from strategy.JiuHouNiuYi import JiuHouNiuYi
 
-filepath = "csv/CS.csv"
+filepath = "csv/A.csv"
 df_a = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_a['code'].values
 
@@ -22,6 +21,9 @@ result = []
 strategyName = []
 
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
+    if index < 134:
+        continue
+
     # 结束时间浮动3天，最近3天符合条件即可, 若要精确到某一天，设置为1
     dynamic_day = 3
     # 设置选股开始时间和结束时间
