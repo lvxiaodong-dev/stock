@@ -7,10 +7,10 @@ from libs.troughbars import TROUGHBARS
 
 
 class HeiMa(Strategy):
-    def __init__(self, name, df):
-        super().__init__(name, df)
+    def __init__(self, name, df, dynamic_day):
+        super().__init__(name, df, dynamic_day)
 
-    def exec(self):
+    def find(self):
         # 向量化计算指标
         df = self.df
         OPEN = df['开盘']

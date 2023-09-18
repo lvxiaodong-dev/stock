@@ -1,13 +1,12 @@
 import pandas as pd
-import talib
 from strategy.Strategy import Strategy
 
 
 class JiuHouNiuYi(Strategy):
-    def __init__(self, name, df):
-        super().__init__(name, df)
+    def __init__(self, name, df, dynamic_day):
+        super().__init__(name, df, dynamic_day)
 
-    def exec(self):
+    def find(self):
         df = self.df
         CLOSE = df['收盘']
 

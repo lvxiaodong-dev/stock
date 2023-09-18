@@ -1,3 +1,4 @@
+import sys
 import traceback
 import pandas as pd
 import numpy as np
@@ -10,8 +11,18 @@ from strategy.WeeklyGoldenCross import WeeklyGoldenCross
 from strategy.HongLiBeiLiWang import HongLiBeiLiWang
 from strategy.HeiMa import HeiMa
 from strategy.JiuHouNiuYi import JiuHouNiuYi
+from strategy.LiuCaiShenLong import LiuCaiShenLong
 
+# 获取命令行参数（忽略第一个参数，即脚本文件名）
+args = sys.argv[1:]
+
+# 设置默认文件路径
 filepath = "csv/A.csv"
+
+# 如果有参数传递，则使用参数作为文件路径的一部分
+if args:
+    filepath = f"csv/{args[0]}"
+    
 df_a = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_a['code'].values
 
@@ -21,8 +32,6 @@ result = []
 strategyName = []
 
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
-    # 结束时间浮动3天，最近3天符合条件即可, 若要精确到某一天，设置为1
-    dynamic_day = 3
     # 设置选股开始时间和结束时间
     start_date = '20190101'
     # end_date = '20230904'
@@ -30,18 +39,16 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
 
     try:
         ak = AkShare(code, start_date, end_date)
-        daily_df = ak.stock_zh_a_hist_daily()
-        # weekly_df = ak.stock_zh_a_hist_weekly()
-        
+        ak.stock_zh_a_hist_daily()
         # 实例化股票类
-        stock = Stock(ak.daily_df, ak.code, dynamic_day)
+        stock = Stock(ak.df, ak.code)
         stock.debugger()
 
-        stock.use(DailyGoldenCross('日线金叉', daily_df))
-        # stock.use(WeeklyGoldenCross('周线金叉', weekly_df))
-        stock.use(HongLiBeiLiWang('弘历背离王', daily_df))
-        stock.use(HeiMa('黑马', daily_df))
-        stock.use(JiuHouNiuYi('九牛转一', daily_df))
+        # stock.use(DailyGoldenCross('日线金叉', ak.df, 3))
+        # stock.use(HongLiBeiLiWang('弘历背离王', ak.df, 3))
+        # stock.use(HeiMa('黑马', ak.df, 3))
+        # stock.use(JiuHouNiuYi('九牛转一', ak.df, 3))
+        stock.use(LiuCaiShenLong('六彩神龙', ak.df, 3))
 
     
         stock.exec()

@@ -1,3 +1,4 @@
+import retry
 import akshare as ak 
 
 class AkShare:
@@ -8,15 +9,11 @@ class AkShare:
         self.start_date = start_date
         # 选股截止时间
         self.end_date = end_date
-        # 日数据
-        self.daily_df = None
-        # 周数据
-        self.daily_df = None
+        # 数据
+        self.df = None
 
+    @retry.retry(exceptions=Exception, tries=3, delay=1)
     def stock_zh_a_hist_daily(self):
-        self.daily_df = ak.stock_zh_a_hist(symbol=self.code, start_date=self.start_date, end_date=self.end_date, period='daily', adjust="qfq")
-        return self.daily_df
+        self.df = ak.stock_zh_a_hist(symbol=self.code, start_date=self.start_date, end_date=self.end_date, period='daily', adjust="qfq")
+        return self.df
     
-    def stock_zh_a_hist_weekly(self):
-        self.weekly_df = ak.stock_zh_a_hist(symbol=self.code, start_date=self.start_date, end_date=self.end_date, period='weekly', adjust="qfq")
-        return self.weekly_df

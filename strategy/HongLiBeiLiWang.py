@@ -3,10 +3,10 @@ from MyTT import EMA, REF, FORCAST, BARSLAST
 from strategy.Strategy import Strategy
 
 class HongLiBeiLiWang(Strategy):
-  def __init__(self, name, df):
-    super().__init__(name, df)
+  def __init__(self, name, df, dynamic_day):
+    super().__init__(name, df, dynamic_day)
 
-  def exec(self):
+  def find(self):
     # 向量化计算指标
     CLOSE = self.df['收盘']
     A1 = FORCAST(EMA(CLOSE, 5), 6)
