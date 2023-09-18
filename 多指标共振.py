@@ -21,9 +21,6 @@ result = []
 strategyName = []
 
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
-    if index < 134:
-        continue
-
     # 结束时间浮动3天，最近3天符合条件即可, 若要精确到某一天，设置为1
     dynamic_day = 3
     # 设置选股开始时间和结束时间
