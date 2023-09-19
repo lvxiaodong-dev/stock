@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 from tqdm import tqdm
 from AkShare import AkShare
+from Yahoo import Yahoo
 from Stock import Stock
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
@@ -23,9 +24,9 @@ filepath = "csv/A.csv"
 # 如果有参数传递，则使用参数作为文件路径的一部分
 if args:
     filepath = f"csv/{args[0]}"
-    
+            
 df_a = pd.read_csv(filepath, dtype=str, engine="python")
-stock_codes = df_a['code'].values
+stock_codes = df_a['code'].values if 'code' in df_a.columns else df_a['Symbol']
 
 result = []
 strategyName = []
@@ -37,7 +38,7 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
     end_date = datetime.now().strftime("%Y%m%d")
 
     try:
-        ak = AkShare(code, start_date, end_date)
+        ak = AkShare(code, start_date, end_date) if 'code' in df_a.columns else Yahoo(code, start_date, end_date)
         ak.get_stock_daily()
         # 实例化股票类
         stock = Stock(ak.df, ak.code)
