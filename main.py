@@ -14,6 +14,7 @@ from strategy.JiuHouNiuYi import JiuHouNiuYi
 from strategy.LiuCaiShenLong import LiuCaiShenLong
 from strategy.FaCaiXian import FaCaiXian
 
+
 # 获取命令行参数（忽略第一个参数，即脚本文件名）
 args = sys.argv[1:]
 
@@ -33,12 +34,13 @@ strategyName = []
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
     # 设置选股开始时间和结束时间
     start_date = '20210101'
-    # end_date = '20230904'
-    end_date = datetime.now().strftime("%Y%m%d")
+    end_date = '20230904'
+    # end_date = datetime.now().strftime("%Y%m%d")
 
     try:
         ak = AkShare(code, start_date, end_date)
-        ak.get_stock_daily()
+        # ak.get_stock_daily()
+        ak.get()
         # 实例化股票类
         stock = Stock(ak.df, ak.code)
         stock.debugger()
