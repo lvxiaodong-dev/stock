@@ -6,7 +6,7 @@ from tqdm import tqdm
 from StockDB import StockDB
 
 max_workers = 10
-filepath = "csv/CS.csv"
+filepath = "csv/A.csv"
 start_date = '20190101'
 end_date = '20230919'
 

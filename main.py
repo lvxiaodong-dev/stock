@@ -6,7 +6,6 @@ from datetime import datetime
 from tqdm import tqdm
 from AkShare import AkShare
 from Stock import Stock
-from StockDB import StockDB
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
 from strategy.HongLiBeiLiWang import HongLiBeiLiWang
@@ -14,7 +13,6 @@ from strategy.HeiMa import HeiMa
 from strategy.JiuHouNiuYi import JiuHouNiuYi
 from strategy.LiuCaiShenLong import LiuCaiShenLong
 from strategy.FaCaiXian import FaCaiXian
-
 
 # 获取命令行参数（忽略第一个参数，即脚本文件名）
 args = sys.argv[1:]
@@ -32,29 +30,25 @@ stock_codes = df_a['code'].values
 result = []
 strategyName = []
 
-db = StockDB()
-
 for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
     # 设置选股开始时间和结束时间
-    start_date = '20190101'
-    end_date = '20230904'
-    # end_date = datetime.now().strftime("%Y%m%d")
+    start_date = '20210101'
+    # end_date = '20230904'
+    end_date = datetime.now().strftime("%Y%m%d")
 
     try:
-        # ak = AkShare(code, start_date, end_date)
-        # ak.get_stock_daily()
-        # ak.get()
-        df = db.query(code, start_date, end_date)
+        ak = AkShare(code, start_date, end_date)
+        ak.get_stock_daily()
         # 实例化股票类
-        stock = Stock(df, code)
+        stock = Stock(ak.df, ak.code)
         stock.debugger()
 
-        stock.use(DailyGoldenCross('日线金叉', df, 3))
-        # stock.use(HongLiBeiLiWang('弘历背离王', df, 3))
-        # stock.use(HeiMa('黑马', df, 1))
-        # stock.use(JiuHouNiuYi('九牛转一', df, 3))
-        # stock.use(LiuCaiShenLong('六彩神龙', df, 3))
-        # stock.use(FaCaiXian('发财线', df, 3))
+        # stock.use(DailyGoldenCross('日线金叉', ak.df, 3))
+        # stock.use(HongLiBeiLiWang('弘历背离王', ak.df, 3))
+        stock.use(HeiMa('黑马', ak.df, 1))
+        # stock.use(JiuHouNiuYi('九牛转一', ak.df, 3))
+        # stock.use(LiuCaiShenLong('六彩神龙', ak.df, 3))
+        # stock.use(FaCaiXian('发财线', ak.df, 3))
 
     
         stock.exec()
