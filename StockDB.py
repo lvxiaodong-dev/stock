@@ -1,5 +1,6 @@
 import sys
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 import akshare as ak 
 import pandas as pd
 from tqdm import tqdm
@@ -8,55 +9,6 @@ class StockDB:
     def __init__(self):
         self.conn = sqlite3.connect('db/stock.db')
         self.cursor = self.conn.cursor()
-
-    def download(self):
-        # 执行插入语句
-        filepath = "csv/A.csv"
-        df_a = pd.read_csv(filepath, dtype=str, engine="python")
-        stock_codes = df_a['code'].values
-
-        for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Processing'):
-            start_date = '20190101'
-            end_date = '20230919'
-
-            df = ak.stock_zh_a_hist(symbol=code, start_date=start_date, end_date=end_date, period='daily', adjust="qfq")
-
-            data_list = []
-            # 插入数据的 SQL 语句
-            insert_data_sql = '''
-                INSERT OR IGNORE INTO stock_daily (code, date, open, high, low, close)
-                VALUES (?, ?, ?, ?, ?, ?)
-            '''
-            # 将 DataFrame 中的数据写入数据库
-            for index, row in df.iterrows():
-                data_list.append((code, row['日期'], row['开盘'], row['最高'], row['最低'], row['收盘']))
-                
-            # 执行批量插入操作
-            self.cursor.executemany(insert_data_sql, data_list)
-        self.conn.commit()
-
-    
-    def query(self, code, start_date, end_date):
-        # 执行查询语句并返回DataFrame
-        query_sql = '''
-            SELECT * FROM stock_daily
-            WHERE code = ? AND date >= ? AND date <= ?
-            ORDER BY date ASC
-        '''
-        # 执行查询语句
-        self.cursor.execute(query_sql, (code, start_date, end_date))
-
-        # 获取查询结果
-        results = self.cursor.fetchall()
-        df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
-        new_columns = {'date': '日期', 'open': '开盘', 'close': '收盘', 'high': '最高', 'low': '最低'}
-        df = df.rename(columns=new_columns)
-        self.conn.commit()
-        return df
-
-
-    # def update(self):
-        # 执行更新语句
 
     def delete(self):
         # 删除表
@@ -94,7 +46,62 @@ class StockDB:
 
         # 提交事务
         self.conn.commit()
-        print("索引创建成功")
+
+    # def update(self):
+    # 执行更新语句
+
+    def download(self, max_workers, filepath, start_date, end_date):
+    # 执行插入语句
+        df_a = pd.read_csv(filepath, dtype=str, engine="python")
+        stock_codes = df_a['code'].values
+
+        with tqdm(total=len(stock_codes), desc='Downloading stocks') as pbar:
+            with ThreadPoolExecutor(max_workers) as executor:
+                futures = []
+                for code in stock_codes:
+                    future = executor.submit(self.download_stock, code, start_date, end_date)
+                    future.add_done_callback(lambda p: pbar.update(1))
+                    futures.append(future)
+                # 等待所有任务完成
+                for future in futures:
+                    future.result()
+
+    def download_stock(self, code, start_date, end_date):
+        conn = sqlite3.connect('db/stock.db')
+        cursor = conn.cursor()
+
+        df = ak.stock_zh_a_hist(symbol=code, start_date=start_date, end_date=end_date, period='daily', adjust="qfq")
+        data_list = []
+        # 插入数据的 SQL 语句
+        insert_data_sql = '''
+            INSERT OR IGNORE INTO stock_daily (code, date, open, high, low, close)
+            VALUES (?, ?, ?, ?, ?, ?)
+        '''
+        # 将 DataFrame 中的数据写入数据库
+        for index, row in df.iterrows():
+            data_list.append((code, row['日期'], row['开盘'], row['最高'], row['最低'], row['收盘']))
+            
+        # 执行批量插入操作
+        cursor.executemany(insert_data_sql, data_list)
+        conn.commit()
+    
+    def query(self, code, start_date, end_date):
+        # 执行查询语句并返回DataFrame
+        query_sql = '''
+            SELECT * FROM stock_daily
+            WHERE code = ? AND date >= ? AND date <= ?
+            ORDER BY date ASC
+        '''
+        # 执行查询语句
+        self.cursor.execute(query_sql, (code, start_date, end_date))
+
+        # 获取查询结果
+        results = self.cursor.fetchall()
+        df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
+        new_columns = {'date': '日期', 'open': '开盘', 'close': '收盘', 'high': '最高', 'low': '最低'}
+        df = df.rename(columns=new_columns)
+        self.conn.commit()
+        return df
 
 
     def close(self):
