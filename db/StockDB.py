@@ -50,7 +50,6 @@ class StockDB:
 
     def download(self, max_workers, filepath, start_date, end_date):
         stock_codes = self.read_csv(filepath)
-
         with tqdm(total=len(stock_codes), desc='Downloading stocks') as pbar:
             with ThreadPoolExecutor(max_workers) as executor:
                 futures = []
