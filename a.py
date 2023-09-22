@@ -13,7 +13,7 @@ from strategy.FaCaiXian import FaCaiXian
 
 db = AStockDB()
 filepath = 'csv/A.csv'
-start_date = '20150101'
+start_date = '20190101'
 # end_date = '20230904'
 end_date = datetime.now().strftime("%Y%m%d")
 
