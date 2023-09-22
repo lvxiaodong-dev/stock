@@ -19,7 +19,7 @@ class StockDB:
     def create(self):
         create_table_sql = '''
             CREATE TABLE IF NOT EXISTS stock_daily 
-            (id TEXT PRIMARY KEY, 
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, 
             code TEXT NOT NULL,
             date TEXT NOT NULL,  
             open FLOAT, 

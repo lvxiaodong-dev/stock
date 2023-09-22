@@ -38,6 +38,9 @@ class AStockDB(StockDB):
         # 执行批量插入操作
         cursor.executemany(insert_data_sql, data_list)
         conn.commit()
+
+    def get_stock_daily(self, code, start_date, end_date):
+        return self.query(code, start_date, end_date)
     
     def query(self, code, start_date, end_date):
         # 执行查询语句并返回DataFrame

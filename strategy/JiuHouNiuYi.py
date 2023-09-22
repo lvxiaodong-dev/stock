@@ -3,8 +3,8 @@ from strategy.Strategy import Strategy
 
 
 class JiuHouNiuYi(Strategy):
-    def __init__(self, name, df, dynamic_day):
-        super().__init__(name, df, dynamic_day)
+    def __init__(self, *args):
+        super().__init__(*args)
 
     def find(self):
         df = self.df

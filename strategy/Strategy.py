@@ -3,10 +3,12 @@ import talib
 
 
 class Strategy:
-    def __init__(self, name, df, dynamic_day):
+    def __init__(self, name, dynamic_day):
         self.name = name
-        self.df = df
         self.dynamic_day = dynamic_day
+
+    def set_df(self, df):
+        self.df = df
 
     def exec(self):
         result = []
