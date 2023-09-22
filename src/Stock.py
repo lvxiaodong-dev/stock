@@ -29,12 +29,6 @@ class Stock:
     def is_buy(self):
         return all(self.result)
 
-    # 符合策略的百分比
-    def true_percentage(self):
-        true_count = sum(self.result)
-        percentage = (true_count / len(self.result)) * 100
-        return percentage
-    
     # 获取指标名称
     def getStrategyName(self):
         return [strategy.name for strategy in self.strategyGroup]

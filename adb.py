@@ -1,17 +1,12 @@
-import sys
-import sqlite3
-import akshare as ak 
-import pandas as pd
-from tqdm import tqdm
-from StockDB import StockDB
+from db.AStockDB import AStockDB
 
-max_workers = 10
+max_workers = 3
 filepath = "csv/A.csv"
 start_date = '20190101'
 end_date = '20230919'
 
 
-db = StockDB()
+db = AStockDB()
 
 db.delete()
 

@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 from tqdm import tqdm
 from AkShare import AkShare
-from Stock import Stock
+from src.Stock import Stock
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
 from strategy.HongLiBeiLiWang import HongLiBeiLiWang
@@ -44,8 +44,8 @@ for index, code in tqdm(enumerate(stock_codes), total=len(stock_codes), desc='Pr
         stock.debugger()
 
         # stock.use(DailyGoldenCross('日线金叉', ak.df, 3))
-        # stock.use(HongLiBeiLiWang('弘历背离王', ak.df, 3))
-        stock.use(HeiMa('黑马', ak.df, 1))
+        stock.use(HongLiBeiLiWang('弘历背离王', ak.df, 3))
+        # stock.use(HeiMa('黑马', ak.df, 1))
         # stock.use(JiuHouNiuYi('九牛转一', ak.df, 3))
         # stock.use(LiuCaiShenLong('六彩神龙', ak.df, 3))
         # stock.use(FaCaiXian('发财线', ak.df, 3))
