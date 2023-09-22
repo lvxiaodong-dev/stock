@@ -21,13 +21,13 @@ class Strategy:
         self.df = self.df.iloc[:-1]
 
     def OPEN(self):
-        return self.df['开盘'] if '开盘' in self.df.columns else self.df['Open']
+        return self.df['open']
     
     def CLOSE(self):
-        return self.df['收盘'] if '收盘' in self.df.columns else self.df['Close']
+        return self.df['close']
     
     def HIGH(self):
-        return self.df['最高'] if '最高' in self.df.columns else self.df['High']
+        return self.df['high']
     
     def LOW(self):
-        return self.df['最低'] if '最低' in self.df.columns else self.df['Low']
+        return self.df['low']

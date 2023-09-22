@@ -55,7 +55,5 @@ class AStockDB(StockDB):
         # 获取查询结果
         results = self.cursor.fetchall()
         df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
-        new_columns = {'date': '日期', 'open': '开盘', 'close': '收盘', 'high': '最高', 'low': '最低'}
-        df = df.rename(columns=new_columns)
         self.conn.commit()
         return df

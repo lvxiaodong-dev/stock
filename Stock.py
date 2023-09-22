@@ -17,7 +17,7 @@ class Stock:
         # 股票数据
         self.df = None
         # 选股策略组
-        self.strategyGroup = []
+        self.strategies = []
         # 选股结果
         self.selected_stocks = []
         # 是否开启调试模式
@@ -31,41 +31,38 @@ class Stock:
         self.isDebugger = flag
 
     def use(self, strategy):
-        self.strategyGroup.append(strategy)
+        self.strategies.append(strategy)
 
     def exec(self):
-        for strategy in self.strategyGroup:
+        condition = []
+        for strategy in self.strategies:
             strategy.set_df(self.df)
             flag = strategy.exec()
-            self.selected_stocks.append(flag)
+            condition.append(flag)
+        
+        return condition
     
     # 是否所有策略都符合条件
-    def is_buy(self):
-        return all(self.selected_stocks)
+    def is_buy(self, condition):
+        return all(condition)
 
     # 获取指标名称
     def getStrategyName(self):
-        return [strategy.name for strategy in self.strategyGroup]
+        return [strategy.name for strategy in self.strategies]
     
     # 找股票
     def find_stock(self, code):
-        df = self.db.get_stock_daily(code, self.start_date, self.end_date)
-
-        # 实例化股票类
-        stock = Stock(df, code)
-
-        stock.exec()
-
-        self.strategyName = stock.getStrategyName()
+        self.df = self.db.get_stock_daily(code, self.start_date, self.end_date)
+        condition = self.exec()
         # 是否可以买
-        is_buy = stock.is_buy()
+        is_buy = self.is_buy(condition)
         if is_buy:
-            print(f'{code} 符合策略结果')
+            self.isDebugger and print(f'{code} 符合策略结果')
             self.selected_stocks.append(code)
 
     def print_stock(self):
         if len(self.selected_stocks) > 0:
-            strategyName = '_'.join(self.strategyName)
+            strategyName = '_'.join(self.getStrategyName())
             savepath = f'dist/{datetime.now()}_{strategyName}.txt'
             np.savetxt(savepath, self.selected_stocks, delimiter=',', fmt='%s')
             print('选股结果保存成功！' + savepath)
