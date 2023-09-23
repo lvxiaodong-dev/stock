@@ -11,7 +11,7 @@ df_csv = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_csv['Symbol']
 
 
-start_date = '2023-01-01'
+start_date = '2022-01-01'
 end_date = datetime.now().strftime("%Y-%m-%d")
 
 
