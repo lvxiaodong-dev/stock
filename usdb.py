@@ -1,21 +1,32 @@
+import pandas as pd
 from datetime import datetime
-from db.USStockDB import YahooStockDB
+from api.Yahoo import Yahoo
+from db.StockDB import StockDB
 
-max_workers = 3
+db_path = 'db/stock.db'
+table_name = 'stock_daily_us'
+
 filepath = "csv/nasdaq.csv"
-start_date = datetime.strptime('20190101','%Y%m%d')
-end_date = datetime.strptime('20230919','%Y%m%d')
+df_csv = pd.read_csv(filepath, dtype=str, engine="python")
+stock_codes = df_csv['Symbol']
 
 
-db = YahooStockDB()
+start_date = '2023-01-01'
+end_date = datetime.now().strftime("%Y-%m-%d")
 
-# db.delete()
+
+api = Yahoo(stock_codes, start_date, end_date)
+db = StockDB(db_path, table_name)
+
+db.delete()
 
 db.create()
 
 db.create_index()
 
-db.download(max_workers, filepath, start_date, end_date)
-print('下载完成！')
+api.download(db)
 
 db.close()
+
+print('下载完成！')
+

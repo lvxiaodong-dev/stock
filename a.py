@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 from Stock import Stock
-from db.AStockDB import AStockDB
+from db.AkStockDB import AkStockDB
 
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
@@ -11,7 +11,7 @@ from strategy.JiuHouNiuYi import JiuHouNiuYi
 from strategy.LiuCaiShenLong import LiuCaiShenLong
 from strategy.FaCaiXian import FaCaiXian
 
-db = AStockDB()
+db = AkStockDB()
 filepath = 'csv/A.csv'
 start_date = '20190101'
 # end_date = '20230904'
