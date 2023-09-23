@@ -12,7 +12,7 @@ class Yahoo:
         stock_codes = self.stock_codes
         for code in tqdm(stock_codes, desc='Processing'):
             data = self.download_stock_data(code)
-            db.executemany(data)
+            db.batch_insert(data)
         
         # 失败重试3次
     @retry.retry(exceptions=Exception, tries=3, delay=1)

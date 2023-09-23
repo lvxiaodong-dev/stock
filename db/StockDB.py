@@ -51,7 +51,7 @@ class StockDB:
     # def update(self):
     # 执行更新语句
 
-    def executemany(self, data_list):
+    def batch_insert(self, data_list):
         # 插入数据的 SQL 语句
         insert_data_sql = '''
             INSERT OR IGNORE INTO {} (code, date, open, high, low, close)

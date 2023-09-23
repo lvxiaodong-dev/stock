@@ -52,7 +52,7 @@ class Stock:
     
     # 找股票
     def find_stock(self, code):
-        self.df = self.db.get_stock_daily(code, self.start_date, self.end_date)
+        self.df = self.db.query(code, self.start_date, self.end_date)
         condition = self.exec()
         # 是否可以买
         is_buy = self.is_buy(condition)

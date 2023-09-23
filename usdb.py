@@ -6,7 +6,7 @@ from db.StockDB import StockDB
 db_path = 'db/stock.db'
 table_name = 'stock_daily_us'
 
-filepath = "csv/nasdaq.csv"
+filepath = "csv/US.csv"
 df_csv = pd.read_csv(filepath, dtype=str, engine="python")
 stock_codes = df_csv['Symbol']
 

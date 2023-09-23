@@ -1,5 +1,7 @@
-code
-000001
-000010
-000017
-000023
+Symbol,Name,Last Sale,Net Change,% Change,Market Cap,Country,IPO Year,Volume,Sector,Industry
+A,Agilent Technologies Inc. Common Stock,$141.20,-2.00,-1.397%,41775442590.00,United States,1999,1521953,Industrials,Electrical Products
+AA,Alcoa Corporation Common Stock ,$46.45,-1.51,-3.148%,8220214277.00,,2016,4380738,Industrials,Metal Fabrications
+AAC,Ares Acquisition Corporation Class A Ordinary Shares,$10.22,-0.01,-0.098%,1277500000.00,,2021,41195,Finance,Blank Checks
+AACG,ATA Creativity Global American Depositary Shares,$1.87,-0.08,-4.103%,58674840.00,China,2008,57549,Consumer Discretionary,Service to the Health Industry
+AACI,Armada Acquisition Corp. I Common Stock,$10.03,0.00,0.00%,207716285.00,United States,2021,177564,Industrials,Consumer Electronics/Appliances
+AACIU,Armada Acquisition Corp. I Unit,$10.45,0.00,0.00%,0.00,United States,2021,1,Industrials,Consumer Electronics/Appliances
