@@ -16,7 +16,7 @@ table_name = 'stock_daily_us'
 db = StockDB(db_path, table_name)
 
 
-filepath = 'csv/CS.csv'
+filepath = 'csv/US.csv'
 start_date = '2019-01-01'
 # end_date = '20230904'
 end_date = datetime.now().strftime("%Y-%m-%d")
