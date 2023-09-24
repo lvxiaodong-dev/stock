@@ -15,7 +15,6 @@ start_date = '2022-01-01'
 end_date = datetime.now().strftime("%Y-%m-%d")
 
 
-api = Yahoo(stock_codes, start_date, end_date)
 db = StockDB(db_path, table_name)
 
 db.delete()
@@ -24,6 +23,11 @@ db.create()
 
 db.create_index()
 
+max_date = db.max_date()
+if max_date:
+    start_date = max_date
+    
+api = Yahoo(stock_codes, start_date, end_date)
 api.download(db)
 
 db.close()

@@ -14,7 +14,7 @@ class HeiMa(Strategy):
         return self.find()
 
     def find(self):
-        day = self.dynamic_day
+        day = self.recent_day
         # 向量化计算指标
         OPEN = self.OPEN()
         CLOSE = self.CLOSE()

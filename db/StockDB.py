@@ -2,6 +2,7 @@ import sys
 import sqlite3
 import pandas as pd
 from tqdm import tqdm
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 class StockDB:
@@ -78,7 +79,12 @@ class StockDB:
         df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
         self.conn.commit()
         return df
-
+    
+    def max_date(self):
+        query_sql = "SELECT MAX(date) FROM {}".format(self.table_name)
+        self.cursor.execute(query_sql)
+        max_date = self.cursor.fetchone()[0]
+        return datetime.strptime(max_date, "%Y-%m-%d").strftime("%Y%m%d") if max_date else max_date
 
     def close(self):
         self.cursor.close()
