@@ -28,11 +28,12 @@ class LiuCaiShenLongGreen(Strategy):
         with np.errstate(invalid='ignore'):
             RSI1 = SMA(TEMP1,MM_PERIOD,1)/SMA(TEMP2,MM_PERIOD,1)*100;
             RSI_B = MM_SENS*(RSI1-MM_BASE);
+            MM_RSI = 0 if RSI_B[-1] < 0 else RSI_B[-1]
 
             RSI2 = SMA(TEMP1,HOT_PERIOD,1)/SMA(TEMP2,HOT_PERIOD,1)*100;
-            RSI_M = HOT_SENS*(RSI2-HOT_BASE);
-
-            condition1 = (RSI_B[-1] + RSI_M[-1]) * 5 <= 20
+            RSI_M = HOT_SENS*(RSI2-HOT_BASE)
+            HOT_RSI = 0 if RSI_M[-1] < 0 else RSI_M[-1]
+            condition1 = (MM_RSI + HOT_RSI) <= 5
 
             # # 判断买入条件
             if condition1:
