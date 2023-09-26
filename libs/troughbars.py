@@ -49,7 +49,6 @@ def ZIG(self, K, N):
     z = np.zeros(len(K))
     state = ZIG_STATE_START
     while True:
-        #print(peers)
         scan_i += 1
         if scan_i == len(K) - 1:
             # 扫描到尾部

@@ -3,14 +3,16 @@ import talib
 
 
 class Strategy:
-    def __init__(self, name, df, dynamic_day):
+    def __init__(self, name, recent_day):
         self.name = name
+        self.recent_day = recent_day
+
+    def set_df(self, df):
         self.df = df
-        self.dynamic_day = dynamic_day
 
     def exec(self):
         result = []
-        for _ in range(self.dynamic_day):
+        for _ in range(self.recent_day):
             result.append(self.find())
             self.pop()
         return any(result)
@@ -19,13 +21,13 @@ class Strategy:
         self.df = self.df.iloc[:-1]
 
     def OPEN(self):
-        return self.df['开盘'] if '开盘' in self.df.columns else self.df['Open']
+        return self.df['OPEN']
     
     def CLOSE(self):
-        return self.df['收盘'] if '收盘' in self.df.columns else self.df['Close']
+        return self.df['CLOSE']
     
     def HIGH(self):
-        return self.df['最高'] if '最高' in self.df.columns else self.df['High']
+        return self.df['GIHT']
     
     def LOW(self):
-        return self.df['最低'] if '最低' in self.df.columns else self.df['Low']
+        return self.df['LOW']
