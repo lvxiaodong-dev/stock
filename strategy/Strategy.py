@@ -21,13 +21,13 @@ class Strategy:
         self.df = self.df.iloc[:-1]
 
     def OPEN(self):
-        return self.df['open']
+        return self.df['OPEN']
     
     def CLOSE(self):
-        return self.df['close']
+        return self.df['CLOSE']
     
     def HIGH(self):
-        return self.df['high']
+        return self.df['GIHT']
     
     def LOW(self):
-        return self.df['low']
+        return self.df['LOW']

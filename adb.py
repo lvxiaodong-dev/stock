@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-from api.AkShare import AkShare
+from api.AkShare_zh import AkShareZh
 from db.StockDB import StockDB
 
 db_path = 'db/stock.db'
@@ -26,7 +26,7 @@ max_date = db.max_date()
 if max_date:
     start_date = max_date
 
-api = AkShare(stock_codes, start_date, end_date)
+api = AkShareZh(stock_codes, start_date, end_date)
 api.download(db)
 
 db.close()

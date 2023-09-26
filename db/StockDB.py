@@ -1,10 +1,6 @@
-import sys
 import sqlite3
 import pandas as pd
-from tqdm import tqdm
 from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
-
 class StockDB:
     def __init__(self, db_path, table_name):
         self.db_path = db_path
@@ -26,16 +22,16 @@ class StockDB:
             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
             code TEXT NOT NULL,
             date DATETIME NOT NULL,  
-            open FLOAT, 
-            close FLOAT,
-            high FLOAT,
-            low FLOAT,
+            OPEN FLOAT, 
+            CLOSE FLOAT,
+            HIGH FLOAT,
+            LOW FLOAT,
+            VOL INTEGER,
             UNIQUE (code, date)
         );
         '''.format(self.table_name)
         self.cursor.execute(create_table_sql)
         self.conn.commit()
-
 
     def create_index(self):
         # 创建索引的 SQL 语句
@@ -49,21 +45,17 @@ class StockDB:
         # 提交事务
         self.conn.commit()
 
-    # def update(self):
-    # 执行更新语句
-
     def batch_insert(self, data_list):
         # 插入数据的 SQL 语句
         insert_data_sql = '''
-            INSERT OR IGNORE INTO {} (code, date, open, high, low, close)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO {} (code, date, OPEN, HIGH, LOW, CLOSE, VOL)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         '''.format(self.table_name)
-            
+
         # 执行批量插入操作
         self.cursor.executemany(insert_data_sql, data_list)
         self.conn.commit()
 
-    
     def query(self, code, start_date, end_date):
         # 执行查询语句并返回DataFrame
         query_sql = '''
@@ -76,10 +68,11 @@ class StockDB:
 
         # 获取查询结果
         results = self.cursor.fetchall()
-        df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
+        df = pd.DataFrame(results, columns=[column[0]
+                          for column in self.cursor.description])
         self.conn.commit()
         return df
-    
+
     def max_date(self):
         query_sql = "SELECT MAX(date) FROM {}".format(self.table_name)
         self.cursor.execute(query_sql)
