@@ -86,14 +86,14 @@ class CrackBottom(Strategy):
             condition8 = K11[-1] > D11[-1]
 
             # 9. TURNOVER RATE
-            # TURNOVERRATE = VOL/CAPITAL*100
-            # VAR1 = VOL/((HIGH-LOW)*2-ABS(CLOSE-OPEN))
-            # BUY_PRESSURE1 = IF(CLOSE>OPEN,VAR1*(HIGH-LOW),IF(CLOSE<OPEN,VAR1*((HIGH-OPEN)+(CLOSE-LOW)),VOL/2))
-            # SELL_PRESSURE1 = IF(CLOSE>OPEN,0-VAR1*((HIGH-CLOSE)+(OPEN-LOW)),IF(CLOSE<OPEN,0-VAR1*(HIGH-LOW),0-VOL/2))
-            # DLX = (BUY_PRESSURE1-(-SELL_PRESSURE1))/VOL*TURNOVERRATE
-            # DLX1 = SUM(DLX,6)
-            # DLX2 = MA(DLX1,5);
-            # condition8=DLX1>DLX2
+            TURNOVERRATE = VOL/CAPITAL*100
+            VAR1 = VOL/((HIGH-LOW)*2-ABS(CLOSE-OPEN))
+            BUY_PRESSURE1 = IF(CLOSE>OPEN,VAR1*(HIGH-LOW),IF(CLOSE<OPEN,VAR1*((HIGH-OPEN)+(CLOSE-LOW)),VOL/2))
+            SELL_PRESSURE1 = IF(CLOSE>OPEN,0-VAR1*((HIGH-CLOSE)+(OPEN-LOW)),IF(CLOSE<OPEN,0-VAR1*(HIGH-LOW),0-VOL/2))
+            DLX = (BUY_PRESSURE1-(-SELL_PRESSURE1))/VOL*TURNOVERRATE
+            DLX1 = SUM(DLX,6)
+            DLX2 = MA(DLX1,5);
+            condition8=DLX1>DLX2
 
             # # 判断买入条件
             if condition1 and condition2 and condition3 and condition4 and condition5 and condition6 and condition7 and condition8:

@@ -6,8 +6,16 @@ class AkShare:
         self.stock_codes = stock_codes
         self.start_date = start_date
         self.end_date = end_date
+        self.key_mapping = {
+            '日期': 'date',
+            '开盘': 'OPEN',
+            '收盘': 'CLOSE',
+            '最高': 'HIGH',
+            '最低': 'LOW',
+            '成交量': 'VOL'
+        }
 
-    def download(self, db):
+    def download(self, callback):
         codes = self.stock_codes
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
@@ -16,14 +24,23 @@ class AkShare:
             
             for future in tqdm(futures, total=len(codes), desc='Downloading'): 
                 data = future.result()
-                db.batch_insert(data)
+                callback(data)
 
     def download_stock_data(self, code):
         df = self.get_stock_data(code, self.start_date, self.end_date)
-        data_list = []
-        # 将 DataFrame 中的数据写入数据库
-        for index, row in df.iterrows():
-            data_list.append((code, self.getDate(row), row['开盘'], row['最高'], row['最低'], row['收盘'], row['成交量']))
-        return data_list
-
+        return self.format_df(df, code)
     
+    def format_df(self, df, code):
+        data_list = []
+        for index, row in df.iterrows():
+            data_item = {
+                'code': code,
+                'date': row['日期'],
+                'OPEN': row['开盘'],
+                'CLOSE': row['收盘'],
+                'LOW': row['最低'],
+                'HIGH': row['最高'],
+                'VOL': row['成交量'],
+            }
+            data_list.append(data_item)
+        return data_list

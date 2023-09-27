@@ -33,6 +33,18 @@ class StockDB:
         self.cursor.execute(create_table_sql)
         self.conn.commit()
 
+    def create_info_table(self):
+        create_table_sql = '''
+            CREATE TABLE IF NOT EXISTS {} 
+            (id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            code TEXT NOT NULL,
+            CAPITAL INTEGER,
+            UNIQUE (code)
+        );
+        '''.format(self.table_name)
+        self.cursor.execute(create_table_sql)
+        self.conn.commit()
+
     def create_index(self):
         # 创建索引的 SQL 语句
         create_index_sql = '''
