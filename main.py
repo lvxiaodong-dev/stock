@@ -1,5 +1,6 @@
 from StockScreener import StockScreener
-from DataProvider.AkShare.AkShare import AkShare
+from DataProvider.A.AkShare import AkShare
+from DataProvider.US.Yahoo import Yahoo
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
 from strategy.HongLiBeiLiWang import HongLiBeiLiWang
@@ -10,8 +11,8 @@ from strategy.LiuCaiShenLongGreen import LiuCaiShenLongGreen
 from strategy.FaCaiXian import FaCaiXian
 from strategy.CrackBottom import CrackBottom
 
-STOCK_TYPE = 'A'
-screener = StockScreener(STOCK_TYPE, AkShare)
+STOCK_TYPE = 'US'
+screener = StockScreener(STOCK_TYPE, Yahoo)
 
 # 设置选股策略
 screener.use(DailyGoldenCross('日线金叉', 3))
