@@ -1,9 +1,14 @@
+import yaml
 from DataProvider.A.AkShare import AkShare
 from DataProvider.US.Yahoo import Yahoo
 from DBScreener import DBScreener
 
-STOCK_TYPE = 'US'
-screener = DBScreener(STOCK_TYPE, Yahoo)
+with open('config.yaml') as f:
+    config = yaml.safe_load(f)
+    
+STOCK_TYPE = config['use']
+class_obj = globals()[config[STOCK_TYPE]['api_class_name']]
+screener = DBScreener(STOCK_TYPE, class_obj)
 
 screener.debugger()
 screener.run()

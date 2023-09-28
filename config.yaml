@@ -1,4 +1,6 @@
+use: A
 A:
+  api_class_name: AkShare
   db_path: db/stock.db
   db_stock_daily_table_name: stock_daily_a
   db_stock_30_minute_table_name: stock_daily_30_minute_a
@@ -7,6 +9,7 @@ A:
   end_date: 2023-09-27
 
 US:
+  api_class_name: Yahoo
   db_path: db/stock.db
   db_stock_daily_table_name: stock_daily_us
   db_stock_30_minute_table_name: stock_daily_30_minute_us
