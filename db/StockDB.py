@@ -94,3 +94,18 @@ class StockDB:
     def close(self):
         self.cursor.close()
         self.conn.close()
+
+    def codes(self):
+        query_sql = '''
+            SELECT DISTINCT code FROM {}
+        '''.format(self.table_name)
+        # 执行查询语句
+        # print(F"execting {query_sql}")
+        a = self.conn.execute(query_sql)
+
+        # 获取查询结果
+        results = [] 
+        rs = a.fetchall()
+        for item in rs:
+            results.append(item[0])
+        return results

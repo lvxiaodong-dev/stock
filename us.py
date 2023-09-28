@@ -11,23 +11,19 @@ from strategy.JiuHouNiuYi import JiuHouNiuYi
 from strategy.LiuCaiShenLong import LiuCaiShenLong
 from strategy.FaCaiXian import FaCaiXian
 from strategy.CrackBottom import CrackBottom
+import os
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 db_path = 'db/stock.db'
 table_name = 'stock_daily_us'
 db = StockDB(db_path, table_name)
 
-
-filepath = 'csv/us.csv'
 start_date = '2020-01-01'
 end_date = datetime.now().strftime("%Y-%m-%d")
-# end_date = '20230904'
 
-# 读csv文件获取stock_codes
-csv_df = pd.read_csv(filepath, dtype=str, engine="python")
-stock_codes = csv_df['代码']
-
+stock_codes=db.codes()
 # 实例化股票类
-stock = Stock(db, stock_codes)
+stock = Stock(db, pd.Series(stock_codes))
 # 设置选股日期
 stock.set_date_range(start_date, end_date)
 
