@@ -72,7 +72,10 @@ class Database:
             self.cursor.execute(f"SELECT {columns} FROM {table_name} WHERE {condition}")
         else:
             self.cursor.execute(f"SELECT {columns} FROM {table_name}")
-        return self.cursor.fetchall()
+        # 获取查询结果
+        results = self.cursor.fetchall()
+        df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
+        return df
     
     def get_max_date(self, table_name, date_column):
         # 获取最大日期

@@ -1,0 +1,51 @@
+import yaml
+import pandas as pd
+from DataProvider.DataProvider import DataProvider 
+from db.Database import Database
+
+class DBScreener:
+
+    def __init__(self, STOCK_TYPE, DataApi):
+        self.STOCK_TYPE = STOCK_TYPE
+        self.provider = DataProvider(DataApi)
+        self.config = self.read_config_yaml()
+
+    def run(self):
+        self.db_path = self.config['db_path']
+        self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
+        self.csv_path = self.config['csv_path']
+        self.start_date = self.config['start_date']
+        self.end_date = self.config['end_date']
+        stock_symbols = self.provider.read_csv(self.csv_path)
+
+        self.db = Database(self.db_path)
+        self.db.connect()
+
+        self.db.drop_table(self.db_stock_daily_table_name)
+
+        self.db.create_table(self.db_stock_daily_table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, UNIQUE (symbol, date)')
+
+        self.db.create_index(self.db_stock_daily_table_name, 'idx_stock_daily_code_date', 'symbol, date')
+
+        # 查询最大时间，增量更新
+        max_date = self.db.get_max_date(self.db_stock_daily_table_name, 'date')
+        if max_date is not None:
+            self.start_date = max_date
+        
+        self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self.download_stock_daily_callback)
+
+        self.db.disconnect()
+
+        print('下载完成！')
+
+    def download_stock_daily_callback(self, data_list):
+        # if len(data_list):
+        self.db.insert_multiple_data(self.db_stock_daily_table_name, data_list)
+
+    def read_config_yaml(self):
+        with open('config.yaml') as f:
+            config = yaml.safe_load(f)
+            return config[self.STOCK_TYPE]
+    
+    def read_csv(self):
+        return pd.read_csv(self.db_path, dtype=str, engine="python")

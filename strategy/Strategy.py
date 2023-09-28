@@ -19,15 +19,3 @@ class Strategy:
 
     def pop(self):
         self.df = self.df.iloc[:-1]
-
-    def OPEN(self):
-        return self.df['OPEN']
-    
-    def CLOSE(self):
-        return self.df['CLOSE']
-    
-    def HIGH(self):
-        return self.df['HIGH']
-    
-    def LOW(self):
-        return self.df['LOW']

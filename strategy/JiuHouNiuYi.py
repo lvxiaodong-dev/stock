@@ -8,7 +8,7 @@ class JiuHouNiuYi(Strategy):
 
     def find(self):
         df = self.df
-        CLOSE = self.CLOSE()
+        CLOSE = df.CLOSE
 
         # B1判断收盘价是否低于4日前收盘价  
         df.loc[:, 'B1'] = CLOSE < CLOSE.shift(4)

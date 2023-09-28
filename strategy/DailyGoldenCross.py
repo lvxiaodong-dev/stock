@@ -7,7 +7,8 @@ class DailyGoldenCross(Strategy):
     super().__init__(*args)
 
   def find(self):
-    CLOSE = self.CLOSE()
+    df = self.df
+    CLOSE = df.CLOSE
     # 计算日线MACD
     macd_diff, macd_dea, macd_bar = ta.MACD(CLOSE, fastperiod=12, slowperiod=26, signalperiod=9) 
     macd_diff = macd_diff.dropna()

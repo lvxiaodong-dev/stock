@@ -14,12 +14,13 @@ class HeiMa(Strategy):
         return self.find()
 
     def find(self):
+        df = self.df
         day = self.recent_day
         # 向量化计算指标
-        OPEN = self.OPEN()
-        CLOSE = self.CLOSE()
-        HIGH = self.HIGH()
-        LOW = self.LOW()
+        OPEN = df.OPEN
+        CLOSE = df.CLOSE
+        HIGH = df.HIGH
+        LOW = df.LOW
 
         VAR1 = (HIGH+LOW+CLOSE)/3
         VAR2 = (VAR1-MA(VAR1, 14))/(0.015*AVEDEV(VAR1, 14))

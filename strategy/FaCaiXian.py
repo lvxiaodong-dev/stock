@@ -9,7 +9,7 @@ class FaCaiXian(Strategy):
 
     def find(self):
         df = self.df
-        CLOSE = self.CLOSE()
+        CLOSE = df.CLOSE
 
         N = 88
         # 最近10天都在发财线之下
