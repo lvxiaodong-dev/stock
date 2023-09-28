@@ -27,7 +27,7 @@ class Strategy:
         return self.df['CLOSE']
     
     def HIGH(self):
-        return self.df['GIHT']
+        return self.df['HIGH']
     
     def LOW(self):
         return self.df['LOW']
