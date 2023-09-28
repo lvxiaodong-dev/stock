@@ -2,7 +2,7 @@ A:
   db_path: db/stock.db
   db_stock_daily_table_name: stock_daily_a
   db_stock_30_minute_table_name: stock_daily_30_minute_a
-  csv_path: 'csv/cs.csv'
+  csv_path: 'csv/a.csv'
   start_date: 2020-01-01
   end_date: 2023-09-27
 
@@ -10,6 +10,6 @@ US:
   db_path: db/stock.db
   db_stock_daily_table_name: stock_daily_us
   db_stock_30_minute_table_name: stock_daily_30_minute_us
-  csv_path: 'csv/cs.csv'
+  csv_path: 'csv/us_yahoo.csv'
   start_date: 2023-01-01
   end_date: 2023-09-25
