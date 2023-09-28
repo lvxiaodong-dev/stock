@@ -7,6 +7,7 @@ class DataProvider:
     def __init__(self, DataApi):
         self.api = DataApi()
 
+    # 下载股票历史日数据
     def download_stock_daily_data(self, stock_symbols, start_date, end_date, callback):
         tasks = []
         for symbol in stock_symbols:
@@ -18,6 +19,7 @@ class DataProvider:
 
         util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
 
+    # 下载股票历史分钟数据
     def download_stock_minute_hist(self, stock_symbols, start_date, end_date, callback):
         tasks = []
         for symbol in stock_symbols:
@@ -29,6 +31,7 @@ class DataProvider:
 
         util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
 
+    # 下载股票信息数据
     def download_stock_info(self, stock_symbols, start_date, end_date, callback):
         tasks = []
         for symbol in stock_symbols:
@@ -40,8 +43,10 @@ class DataProvider:
 
         util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
 
+    # 读取CSV文件内容
     def read_csv(self, csv_path):
         return self.api.read_csv(csv_path)
     
+    # 格式化时间
     def format_date_string(self, date_string):
         return self.api.format_date_string(date_string)

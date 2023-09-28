@@ -13,9 +13,11 @@ class DBScreener:
         # 是否开启调试模式
         self.isDebugger = False
     
+    # 开启调试模式
     def debugger(self, flag = True):
         self.isDebugger = flag
 
+    # 运行
     def run(self):
         try:
             self.download_daily()
@@ -25,6 +27,7 @@ class DBScreener:
             else: 
                 print(e);
     
+    # 下载日数据
     def download_daily(self):
         self.db_path = self.config['db_path']
         self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
@@ -50,15 +53,17 @@ class DBScreener:
         self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self.download_stock_daily_callback)
         self.db.disconnect()
         
-
+    # 获取到数据之后，插入到本地数据库
     def download_stock_daily_callback(self, data_list):
         if len(data_list):
             self.db.insert_multiple_data(self.db_stock_daily_table_name, data_list)
 
+    # 读配置文件
     def read_config_yaml(self):
         with open('config.yaml') as f:
             config = yaml.safe_load(f)
             return config[self.STOCK_TYPE]
     
+    # 读CSV文件
     def read_csv(self):
         return pd.read_csv(self.db_path, dtype=str, engine="python")

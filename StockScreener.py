@@ -24,6 +24,7 @@ class StockScreener:
          # 是否开启调试模式
         self.isDebugger = False
 
+    # 运行程序
     def run(self):
         self.db_path = self.config['db_path']
         self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
@@ -41,12 +42,15 @@ class StockScreener:
 
         print('下载完成！')
     
+    # 开启调试模式
     def debugger(self, flag = True):
         self.isDebugger = flag
 
+    # 使用的策略
     def use(self, strategy):
         self.strategies.append(strategy)
 
+    # 执行选股
     def exec(self, df):
         condition = []
         for strategy in self.strategies:
@@ -74,6 +78,7 @@ class StockScreener:
             self.isDebugger and print(f'{symbol} 符合策略结果')
             self.selected_stocks.append(symbol)
 
+    # 打印选股结果
     def print_stock(self):
         if len(self.selected_stocks) > 0:
             strategyName = '_'.join(self.getStrategyName())
@@ -90,6 +95,7 @@ class StockScreener:
         else:
             print('未找到符合条件的股票，请调整你的策略！')
 
+    # 主程序入口
     def main(self):
         for symbol in tqdm(self.stock_symbols, desc='Processing'):
             try:
@@ -102,10 +108,12 @@ class StockScreener:
 
         self.print_stock()
 
+    # 读配置文件
     def read_config_yaml(self):
         with open('config.yaml') as f:
             config = yaml.safe_load(f)
             return config[self.STOCK_TYPE]
     
+    # 读CSV文件
     def read_csv(self):
         return pd.read_csv(self.db_path, dtype=str, engine="python")
