@@ -1,5 +1,5 @@
-from DataProvider.AkShare.AkShare import AkShare
-from DataProvider.Yahoo.Yahoo import Yahoo
+from DataProvider.A.AkShare import AkShare
+from DataProvider.US.Yahoo import Yahoo
 from DBScreener import DBScreener
 
 STOCK_TYPE = 'US'

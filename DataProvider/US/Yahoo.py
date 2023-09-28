@@ -14,7 +14,6 @@ class Yahoo(DataApi):
 
     def get_stock_daily_hist(self, symbol, start_date, end_date):
         df = self.yf_download(symbol, start_date, end_date)
-        print(df)
         data_list = []
         if df.empty:
             return data_list
