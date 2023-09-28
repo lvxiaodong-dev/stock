@@ -12,7 +12,7 @@ class AkShare(DataApi):
     def stock_zh_a_hist(self, symbol, start_date, end_date):
         return ak.stock_zh_a_hist(symbol=symbol, start_date=start_date, end_date=end_date, period='daily', adjust="qfq")
 
-    def get_stock_daily_data(self, symbol, start_date, end_date):
+    def get_stock_daily_hist(self, symbol, start_date, end_date):
         df = self.stock_zh_a_hist(symbol, start_date, end_date)
         data_list = []
         for index, row in df.iterrows():
@@ -29,7 +29,7 @@ class AkShare(DataApi):
         return data_list
         return df
 
-    def get_stock_minute_data(self, symbol, start_date, end_date, period):
+    def get_stock_minute_hist(self, symbol, start_date, end_date, period):
         return ak.stock_zh_a_hist_min_em(symbol=symbol, start_date=start_date, end_date=end_date, period=period, adjust="qfq")
 
     def get_stock_info(self, symbol):

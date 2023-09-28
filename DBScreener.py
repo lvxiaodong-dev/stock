@@ -1,4 +1,5 @@
 import yaml
+import traceback
 import pandas as pd
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
@@ -9,8 +10,22 @@ class DBScreener:
         self.STOCK_TYPE = STOCK_TYPE
         self.provider = DataProvider(DataApi)
         self.config = self.read_config_yaml()
+        # 是否开启调试模式
+        self.isDebugger = False
+    
+    def debugger(self, flag = True):
+        self.isDebugger = flag
 
     def run(self):
+        try:
+            self.download_daily()
+        except Exception as e:
+            if self.isDebugger:
+                traceback.print_exc()
+            else: 
+                print(e);
+    
+    def download_daily(self):
         self.db_path = self.config['db_path']
         self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
         self.csv_path = self.config['csv_path']
@@ -33,14 +48,12 @@ class DBScreener:
             self.start_date = max_date
         
         self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self.download_stock_daily_callback)
-
         self.db.disconnect()
-
-        print('下载完成！')
+        
 
     def download_stock_daily_callback(self, data_list):
-        # if len(data_list):
-        self.db.insert_multiple_data(self.db_stock_daily_table_name, data_list)
+        if len(data_list):
+            self.db.insert_multiple_data(self.db_stock_daily_table_name, data_list)
 
     def read_config_yaml(self):
         with open('config.yaml') as f:

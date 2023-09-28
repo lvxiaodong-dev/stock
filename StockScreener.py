@@ -67,7 +67,6 @@ class StockScreener:
     # 找股票
     def find_stock(self, symbol):
         df = self.db.fetch_data(self.db_stock_daily_table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
-        print(df)
         condition = self.exec(df)
         # 是否可以买
         is_buy = self.is_buy(condition)

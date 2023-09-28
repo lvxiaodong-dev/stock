@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 class DataApi(ABC):
 
     @abstractmethod
-    def get_stock_daily_data(self, codes):
+    def get_stock_daily_hist(self, codes):
         pass
 
     @abstractmethod
-    def get_stock_minute_data(self, codes):
+    def get_stock_minute_hist(self, codes):
         pass
 
     @abstractmethod

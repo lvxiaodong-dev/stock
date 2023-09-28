@@ -11,18 +11,18 @@ class DataProvider:
         tasks = []
         for symbol in stock_symbols:
             tasks.append({
-                'function': self.api.get_stock_daily_data,
+                'function': self.api.get_stock_daily_hist,
                 'args': [symbol, self.format_date_string(start_date), self.format_date_string(end_date)],
                 'kwargs': {}
             })
 
         util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
 
-    def download_stock_minute_data(self, stock_symbols, start_date, end_date, callback):
+    def download_stock_minute_hist(self, stock_symbols, start_date, end_date, callback):
         tasks = []
         for symbol in stock_symbols:
             tasks.append({
-                'function': self.api.get_stock_minute_data,
+                'function': self.api.get_stock_minute_hist,
                 'args': [symbol, start_date, end_date],
                 'kwargs': {}
             })
