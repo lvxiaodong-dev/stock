@@ -76,7 +76,7 @@ class Stock:
             except Exception as e:
                 if self.isDebugger:
                      traceback.print_exc()
-                else: 
-                    print(e);
+                else:
+                    print(e)
 
         self.print_stock()
