@@ -10,7 +10,7 @@ class Yahoo(DataApi):
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def yf_download(self, symbol, start_date, end_date):
-        return yf.download(symbol, interval='1d', start=start_date, end=end_date, progress=False)
+        return yf.download(symbol, interval='1d', start=start_date, end=end_date, progress=False, timeout=3, threads=False)
 
     def get_stock_daily_hist(self, symbol, start_date, end_date):
         df = self.yf_download(symbol, start_date, end_date)

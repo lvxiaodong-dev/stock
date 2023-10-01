@@ -8,7 +8,7 @@ class DataProvider:
         self.api = DataApi()
 
     # 下载股票历史日数据
-    def download_stock_daily_data(self, stock_symbols, start_date, end_date, callback):
+    def download_stock_daily_data(self, stock_symbols, start_date, end_date, max_workers, callback):
         tasks = []
         for symbol in stock_symbols:
             tasks.append({
@@ -17,10 +17,10 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
 
     # 下载股票历史分钟数据
-    def download_stock_minute_hist(self, stock_symbols, start_date, end_date, callback):
+    def download_stock_minute_hist(self, stock_symbols, start_date, end_date, max_workers, callback):
         tasks = []
         for symbol in stock_symbols:
             tasks.append({
@@ -29,10 +29,10 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
 
     # 下载股票信息数据
-    def download_stock_info(self, stock_symbols, start_date, end_date, callback):
+    def download_stock_info(self, stock_symbols, start_date, end_date, max_workers, callback):
         tasks = []
         for symbol in stock_symbols:
             tasks.append({
@@ -41,7 +41,7 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=5, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
 
     # 读取CSV文件内容
     def read_csv(self, csv_path):

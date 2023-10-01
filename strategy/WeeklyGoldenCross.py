@@ -2,6 +2,7 @@ import pandas as pd
 import talib as ta
 from strategy.Strategy import Strategy
 
+# 周线金叉
 class WeeklyGoldenCross(Strategy):
   def __init__(self, *args):
     super().__init__(*args)

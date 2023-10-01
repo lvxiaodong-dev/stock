@@ -4,6 +4,7 @@ import numpy as np
 from MyTT import REF,MAX,ABS,SMA,MA,CROSS
 from strategy.Strategy import Strategy
 
+# 六彩神龙
 class LiuCaiShenLong(Strategy):
     def __init__(self, *args):
         super().__init__(*args)

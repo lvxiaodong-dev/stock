@@ -1,7 +1,7 @@
 import pandas as pd
 import talib
 
-
+# 父类
 class Strategy:
     def __init__(self, name, recent_day):
         self.name = name

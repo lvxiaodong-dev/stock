@@ -1,9 +1,8 @@
 import numpy as np
 from MyTT import EMA, REF, LLV, HHV, SMA, MAX, ABS, MA, MIN
 from strategy.Strategy import Strategy
+
 # 破底翻指标
-
-
 class CrackBottom(Strategy):
 
     def __init__(self, *args):

@@ -3,6 +3,7 @@ import talib
 import math
 from strategy.Strategy import Strategy
 
+# 发财线
 class FaCaiXian(Strategy):
     def __init__(self, *args):
         super().__init__(*args)

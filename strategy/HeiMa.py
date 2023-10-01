@@ -5,7 +5,7 @@ from MyTT import REF,LLV,HHV,LLV,SMA,AVEDEV,MA
 from libs.zig import ZIG
 from libs.troughbars import TROUGHBARS
 
-
+# 黑马
 class HeiMa(Strategy):
     def __init__(self, *args):
         super().__init__(*args)

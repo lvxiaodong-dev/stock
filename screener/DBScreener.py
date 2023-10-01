@@ -34,6 +34,7 @@ class DBScreener:
         self.csv_path = self.config['csv_path']
         self.start_date = self.config['start_date']
         self.end_date = self.config['end_date']
+        self.max_workers = self.config['max_workers']
         stock_symbols = self.provider.read_csv(self.csv_path)
 
         self.db = Database(self.db_path)
@@ -50,7 +51,7 @@ class DBScreener:
         if max_date is not None:
             self.start_date = max_date
         
-        self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self.download_stock_daily_callback)
+        self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self. max_workers, self.download_stock_daily_callback)
         self.db.disconnect()
         
     # 获取到数据之后，插入到本地数据库

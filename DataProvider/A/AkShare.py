@@ -10,7 +10,7 @@ class AkShare(DataApi):
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def stock_zh_a_hist(self, symbol, start_date, end_date):
-        return ak.stock_zh_a_hist(symbol=symbol, start_date=start_date, end_date=end_date, period='daily', adjust="qfq")
+        return ak.stock_zh_a_hist(symbol=symbol, start_date=start_date, end_date=end_date, period='daily', adjust="qfq", timeout=3)
 
     def get_stock_daily_hist(self, symbol, start_date, end_date):
         df = self.stock_zh_a_hist(symbol, start_date, end_date)

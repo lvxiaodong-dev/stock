@@ -2,6 +2,7 @@ import pandas as pd
 from MyTT import EMA, REF, FORCAST, BARSLAST
 from strategy.Strategy import Strategy
 
+# 弘历背离王
 class HongLiBeiLiWang(Strategy):
   def __init__(self, *args):
     super().__init__(*args)
