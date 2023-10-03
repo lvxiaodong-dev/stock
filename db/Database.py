@@ -42,14 +42,14 @@ class Database:
         placeholders = ', '.join(['?'] * len(data))
         columns = ', '.join(data.keys())
         values = tuple(data.values())
-        self.cursor.execute(f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})", values)
+        self.cursor.execute(f"INSERT OR IGNORE INTO {table_name} ({columns}) VALUES ({placeholders})", values)
         self.connection.commit()
 
     def insert_multiple_data(self, table_name, data_list):
         # 批量插入数据
         columns = ', '.join(data_list[0].keys())
         placeholders = ', '.join(['?'] * len(data_list[0]))
-        query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+        query = f"INSERT OR IGNORE INTO {table_name} ({columns}) VALUES ({placeholders})"
         values = [tuple(data.values()) for data in data_list]
         self.cursor.executemany(query, values)
         self.connection.commit()

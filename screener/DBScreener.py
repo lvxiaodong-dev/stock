@@ -1,6 +1,7 @@
 import yaml
 import traceback
 import pandas as pd
+from datetime import datetime
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
 
@@ -35,10 +36,10 @@ class DBScreener:
         self.start_date = self.config['start_date']
         self.end_date = self.config['end_date']
         self.today_as_end_date = self.config['today_as_end_date']
-        if(self.today_as_end_date) {
-            current_date = datetime.now().date()
-            self.end_date = current_date
-        }
+        # 使用当前日期做为结束时间
+        if self.today_as_end_date:
+            self.end_date = datetime.now().date()
+
         self.max_workers = self.config['max_workers']
         stock_symbols = self.provider.read_csv(self.csv_path)
 
@@ -54,8 +55,8 @@ class DBScreener:
         # 查询最大时间，增量更新
         max_date = self.db.get_max_date(self.db_stock_daily_table_name, 'date')
         if max_date is not None:
-            self.start_date = max_date
-        
+            self.start_date = datetime.strptime(max_date, "%Y-%m-%d").date()
+
         self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self. max_workers, self.download_stock_daily_callback)
         self.db.disconnect()
         

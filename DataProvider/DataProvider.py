@@ -17,7 +17,7 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers, callback)
 
     # 下载股票历史分钟数据
     def download_stock_minute_hist(self, stock_symbols, start_date, end_date, max_workers, callback):
@@ -29,7 +29,7 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers, callback)
 
     # 下载股票信息数据
     def download_stock_info(self, stock_symbols, start_date, end_date, max_workers, callback):
@@ -41,7 +41,7 @@ class DataProvider:
                 'kwargs': {}
             })
 
-        util.run_parallel_tasks(tasks, max_workers=max_workers, callback=callback)
+        util.run_parallel_tasks(tasks, max_workers, callback)
 
     # 读取CSV文件内容
     def read_csv(self, csv_path):
