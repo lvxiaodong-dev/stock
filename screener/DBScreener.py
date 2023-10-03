@@ -34,13 +34,18 @@ class DBScreener:
         self.csv_path = self.config['csv_path']
         self.start_date = self.config['start_date']
         self.end_date = self.config['end_date']
+        self.today_as_end_date = self.config['today_as_end_date']
+        if(self.today_as_end_date) {
+            current_date = datetime.now().date()
+            self.end_date = current_date
+        }
         self.max_workers = self.config['max_workers']
         stock_symbols = self.provider.read_csv(self.csv_path)
 
         self.db = Database(self.db_path)
         self.db.connect()
 
-        self.db.drop_table(self.db_stock_daily_table_name)
+        # self.db.drop_table(self.db_stock_daily_table_name)
 
         self.db.create_table(self.db_stock_daily_table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, UNIQUE (symbol, date)')
 

@@ -31,6 +31,11 @@ class StockScreener:
         self.csv_path = self.config['csv_path']
         self.start_date = self.config['start_date']
         self.end_date = self.config['end_date']
+        self.today_as_end_date = self.config['today_as_end_date']
+        if self.today_as_end_date:
+            current_date = datetime.now().date()
+            self.end_date = current_date
+        
         self.stock_symbols = self.provider.read_csv(self.csv_path)
 
         self.db = Database(self.db_path)
@@ -71,12 +76,15 @@ class StockScreener:
     # 找股票
     def find_stock(self, symbol):
         df = self.db.fetch_data(self.db_stock_daily_table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
-        condition = self.exec(df)
-        # 是否可以买
-        is_buy = self.is_buy(condition)
-        if is_buy:
-            self.isDebugger and print(f'{symbol} 符合策略结果')
-            self.selected_stocks.append(symbol)
+        date = datetime.strptime(df.iloc[-1]['date'], "%Y-%m-%d").date()
+        # 时间不符合的不查询，停牌，节假日等情况
+        if date <= self.end_date:
+            condition = self.exec(df)
+            # 是否可以买
+            is_buy = self.is_buy(condition)
+            if is_buy:
+                self.isDebugger and print(f'{symbol} 符合策略结果')
+                self.selected_stocks.append(symbol)
 
     # 打印选股结果
     def print_stock(self):

@@ -6,7 +6,8 @@ A:
   db_stock_30_minute_table_name: stock_daily_30_minute_a
   csv_path: 'csv/a.csv'
   start_date: 2020-01-01
-  end_date: 2023-09-27
+  end_date: 2023-09-27,
+  today_as_end_date: True
   max_workers: 5
 
 US:
@@ -16,5 +17,6 @@ US:
   db_stock_30_minute_table_name: stock_daily_30_minute_us
   csv_path: 'csv/us_yahoo.csv'
   start_date: 2023-01-01
-  end_date: 2023-09-25
+  end_date: 2023-09-25,
+  today_as_end_date: True
   max_workers: 5
