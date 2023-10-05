@@ -26,6 +26,9 @@ class JiuHouNiuYi(Strategy):
         N = 10
         BB = (NT0.shift(1)==9) & (NT0.shift(1)>=1) & (NT0.shift(1)<=N) & (NT==1) & (CLOSE > CLOSE.shift(4))
 
+        if BB.empty:
+            return False
+
         if BB.iat[-1]:
             return True
         return False

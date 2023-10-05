@@ -1,4 +1,4 @@
-import os
+import os,sys
 import yaml
 import traceback
 import pandas as pd
@@ -36,10 +36,16 @@ class StockScreener:
             current_date = datetime.now().date()
             self.end_date = current_date
         
-        self.stock_symbols = self.provider.read_csv(self.csv_path)
-
+        #self.stock_symbols = self.provider.read_csv(self.csv_path)
         self.db = Database(self.db_path)
         self.db.connect()
+        if (len(sys.argv) < 2):
+            self.stock_symbols=pd.Series(self.db.get_symbols(self.db_stock_daily_table_name, "symbol"))
+        else:
+            self.stock_symbols=pd.Series([sys.argv[1]])
+
+        max_date = self.db.get_max_date(self.db_stock_daily_table_name, 'date')
+        print(f"Searching stocks until {max_date}")
         self.main()
 
         self.db.disconnect()
@@ -109,10 +115,11 @@ class StockScreener:
             try:
                 self.find_stock(symbol)
             except Exception as e:
+                print(f"Exception for {symbol}")
                 if self.isDebugger:
                      traceback.print_exc()
                 else: 
-                    print(e);
+                    print(e)
 
         self.print_stock()
 

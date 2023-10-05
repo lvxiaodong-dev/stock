@@ -1,3 +1,4 @@
+import sys
 import yaml
 import traceback
 import pandas as pd
@@ -41,7 +42,13 @@ class DBScreener:
             self.end_date = datetime.now().date()
 
         self.max_workers = self.config['max_workers']
-        stock_symbols = self.provider.read_csv(self.csv_path)
+        if (len(sys.argv) < 2):
+            stock_symbols = self.provider.read_csv(self.csv_path)
+        else:
+            symbols=[]
+            for i in range(len(sys.argv)-1):
+                symbols.append(sys.argv[i+1])
+            stock_symbols = pd.Series(symbols)
 
         self.db = Database(self.db_path)
         self.db.connect()

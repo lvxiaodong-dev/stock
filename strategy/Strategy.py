@@ -19,3 +19,6 @@ class Strategy:
 
     def pop(self):
         self.df = self.df.iloc[:-1]
+
+    def YahooDf(self):
+        return self.df.rename(columns={'OPEN': 'Open', 'CLOSE':'Close', 'HIGH' : 'High', 'LOW': 'Low', 'VOL':'Volume'})

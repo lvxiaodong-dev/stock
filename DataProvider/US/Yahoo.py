@@ -8,9 +8,27 @@ class Yahoo(DataApi):
     def __init__(self):
         pass
 
+    def small_market_value(self,code):
+        try:
+            market_cap = yf.Ticker(code).fast_info.market_cap
+            #print(stock, market_cap)
+            if market_cap < 10000000000:
+                #print(F"Skip {code} since its cap {market_cap} is small")
+                return True
+        except Exception as e:
+            #print("ERROR: failed to get market_cap")
+            pass
+        return False
+
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def yf_download(self, symbol, start_date, end_date):
-        return yf.download(symbol, interval='1d', start=start_date, end=end_date, progress=False, timeout=3, threads=False)
+        #if (self.small_market_value(symbol)):
+        #    return pd.DataFrame()
+        try:
+            return yf.download(symbol, interval='1d', start=start_date, end=end_date, progress=False, timeout=3, threads=False)
+        except Exception as ex:
+            print(f"Downloading {symbol} Failed: {str(ex)}")
+            return pd.DataFrame()
 
     def get_stock_daily_hist(self, symbol, start_date, end_date):
         df = self.yf_download(symbol, start_date, end_date)
@@ -42,4 +60,3 @@ class Yahoo(DataApi):
     
     def format_date_string(self, date):
         return date
-    
