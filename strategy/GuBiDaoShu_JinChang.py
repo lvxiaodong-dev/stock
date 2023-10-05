@@ -37,6 +37,6 @@ class GuBiDaoShu_JinChang(Strategy):
         # 进场
         entry_circle_dot = IF(
             CURRBARSCOUNT <= WH2+21, CONST(IF(WH6 == 0, HIGH, REF(HIGH, int(WH6[-1])))), None)
-        if CLOSE.iat[-2] < entry_circle_dot[-1] and CLOSE.iat[-1] > entry_circle_dot[-1]:
+        if CLOSE.iat[-2] <= entry_circle_dot[-1] and CLOSE.iat[-1] > entry_circle_dot[-1]:
             return True
         return False
