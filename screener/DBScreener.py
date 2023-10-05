@@ -46,7 +46,7 @@ class DBScreener:
         self.db = Database(self.db_path)
         self.db.connect()
 
-        # self.db.drop_table(self.db_stock_daily_table_name)
+        self.db.drop_table(self.db_stock_daily_table_name)
 
         self.db.create_table(self.db_stock_daily_table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, UNIQUE (symbol, date)')
 

@@ -10,8 +10,8 @@ from strategy.JiuHouNiuYi import JiuHouNiuYi
 from strategy.LiuCaiShenLong import LiuCaiShenLong
 from strategy.LiuCaiShenLongGreen import LiuCaiShenLongGreen
 from strategy.FaCaiXian import FaCaiXian
-from strategy.CrackBottom import CrackBottom
-from strategy.EntrySignal import EntrySignal
+from strategy.QueKouJiuZhuan_JianCang import QueKouJiuZhuan_JianCang
+from strategy.GuBiDaoShu_JinChang import GuBiDaoShu_JinChang
 
 with open('config.yaml') as f:
     config = yaml.safe_load(f)
@@ -27,7 +27,7 @@ screener = StockScreener(STOCK_TYPE, class_obj)
 # screener.use(JiuHouNiuYi('九牛转一', 3))
 # screener.use(LiuCaiShenLongGreen('六彩神龙绿色', 3))
 # screener.use(FaCaiXian('发财线', 3))
-# screener.use(CrackBottom('破底', 1))
-screener.use(EntrySignal('建仓信号', 1))
+# screener.use(QueKouJiuZhuan_JianCang('缺口九转-建仓信号', 2))
+screener.use(GuBiDaoShu_JinChang('顾比倒数-进场', 1))
 screener.debugger()
 screener.run()

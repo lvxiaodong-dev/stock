@@ -4,7 +4,7 @@ from strategy.Strategy import Strategy
 from MyTT import MAX,ABS,REF,EMA,SMA,MA,LLV,HHV,CROSS
 
 # 建仓信号
-class EntrySignal(Strategy):
+class QueKouJiuZhuan_JianCang(Strategy):
   def __init__(self, *args):
     super().__init__(*args)
 
