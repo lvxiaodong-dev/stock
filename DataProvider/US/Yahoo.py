@@ -63,7 +63,7 @@ class Yahoo(DataApi):
         for index, row in df.iterrows():
             data_item = {
                 'symbol': symbol,
-                'date': index.strftime("%Y-%m-%d"),
+                'date': index.strftime("%Y-%m-%d %H:%M:%S"),
                 'OPEN': row['Open'],
                 'CLOSE': row['Close'],
                 'LOW': row['Low'],
