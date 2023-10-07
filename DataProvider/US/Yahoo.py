@@ -40,6 +40,6 @@ class Yahoo(DataApi):
         csv_data = pd.read_csv(csv_path, dtype=str, engine="python")
         return csv_data['Symbol']
     
-    def format_date_string(self, date):
+    def format_daily_string(self, date):
         return date
     

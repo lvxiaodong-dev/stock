@@ -8,7 +8,6 @@ class Database:
         self.cursor = None
 
     def connect(self):
-        print('connect...')
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
 
@@ -20,25 +19,21 @@ class Database:
 
     def drop_table(self, table_name):
         # 删除表格
-        print('drop_table...')
         self.cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
         self.connection.commit()
 
     def create_table(self, table_name, columns):
         # 创建表格
-        print('create_table...')
         self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {table_name} ({columns})")
         self.connection.commit()
     
     def create_index(self, table_name, index_name, columns):
         # 创建索引
-        print('create_index...')
         self.cursor.execute(f"CREATE INDEX IF NOT EXISTS {index_name} ON {table_name} ({columns})")
         self.connection.commit()
 
     def insert_data(self, table_name, data):
         # 插入数据
-        print('insert_data...')
         placeholders = ', '.join(['?'] * len(data))
         columns = ', '.join(data.keys())
         values = tuple(data.values())

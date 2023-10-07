@@ -1,22 +1,79 @@
-use: A
-A:
-  api_class_name: AkShare
-  db_path: db/stock.db
-  db_stock_daily_table_name: stock_daily_a
-  db_stock_30_minute_table_name: stock_daily_30_minute_a
-  csv_path: 'csv/a.csv'
-  start_date: 2020-01-01
-  end_date: 2023-08-30
-  today_as_end_date: True
-  max_workers: 5
+config_A:
+    api_class_name: AkShare
+    db_path: db/stock.db
+    csv_path: csv/a.csv
+    max_workers: 5
+    db_tables:
+        db_stock_info:
+            disabled: 0
+            table_name: stock_info_a
+        db_stock_daily:
+            disabled: 0
+            table_name: stock_daily_a
+            date_range:
+                start_date: 2020-01-01
+                end_date: 2023-10-01
+                today_as_end_date: 1
+        db_stock_120_minute:
+            disabled: 0
+            table_name: stock_120_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+        db_stock_60_minute:
+            disabled: 0
+            table_name: stock_60_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+        db_stock_30_minute:
+            disabled: 0
+            table_name: stock_30_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+        db_stock_15_minute:
+            disabled: 0
+            table_name: stock_15_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+        db_stock_5_minute:
+            disabled: 0
+            table_name: stock_5_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+        db_stock_1_minute:
+            disabled: 0
+            table_name: stock_1_minute_a
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
 
-US:
-  api_class_name: Yahoo
-  db_path: db/stock.db
-  db_stock_daily_table_name: stock_daily_us
-  db_stock_30_minute_table_name: stock_daily_30_minute_us
-  csv_path: 'csv/cs.csv'
-  start_date: 2020-01-01
-  end_date: 2023-09-11
-  today_as_end_date: True
-  max_workers: 5
+config_US:
+    api_class_name: Yahoo
+    db_path: db/stock.db
+    csv_path: csv/us_yahoo.csv
+    max_workers: 5
+    db_tables:
+        db_stock_daily:
+            table_name: stock_daily_us
+            date_range:
+                start_date: 2020-01-01
+                end_date: 2023-08-30
+                today_as_end_date: 1
+        db_stock_info:
+            table_name: stock_info_us
+        db_stock_30_minute:
+            table_name: stock_30_minute_us
+            date_range:
+                start_date: 2020-01-01
+                end_date: 2023-08-30
+                today_as_end_date: 1
