@@ -4,7 +4,7 @@ import traceback
 import pandas as pd
 import numpy as np
 import libs.util as util
-from datetime import datetime
+from datetime import datetime, timedelta
 from tqdm import tqdm
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
@@ -27,14 +27,23 @@ class StockScreener:
     # 运行程序
     def run(self):
         self.db_path = self.config['db_path']
-        self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
         self.csv_path = self.config['csv_path']
-        self.start_date = self.config['start_date']
-        self.end_date = self.config['end_date']
-        self.today_as_end_date = self.config['today_as_end_date']
+        self.mode = self.config['mode']
+        db_stock_config = self.config['db_tables'][self.mode]
+        self.table_name = db_stock_config['table_name']
+        self.start_date = db_stock_config['date_range']['start_date']
+        self.end_date = db_stock_config['date_range']['end_date']
+        self.today_as_end_date = db_stock_config['date_range']['today_as_end_date']
+        self.recent_day = db_stock_config['date_range']['recent_day']
+        today = datetime.now().date()
+        # 使用当前日期做为结束时间
         if self.today_as_end_date:
             current_date = datetime.now().date()
             self.end_date = current_date
+         # 最近recent_day天的数据
+        if self.recent_day:
+            self.start_date = today - timedelta(days=self.recent_day)
+            self.end_date = today
         
         self.stock_symbols = self.provider.read_csv(self.csv_path)
 
@@ -74,7 +83,7 @@ class StockScreener:
     
     # 找股票
     def find_stock(self, symbol):
-        df = self.db.fetch_data(self.db_stock_daily_table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
+        df = self.db.fetch_data(self.table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
         if len(df) > 0:
             date = datetime.strptime(df.iloc[-1]['date'], "%Y-%m-%d").date()
             # 时间不符合的不查询，停牌，节假日等情况

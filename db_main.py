@@ -4,8 +4,8 @@ from DataProvider.US.Yahoo import Yahoo
 from screener.DBScreener import DBScreener
 
 # A股 或 美股
-# CONFIG_TYPE = 'config_A'
-CONFIG_TYPE = 'config_US'
+CONFIG_TYPE = 'config_A'
+# CONFIG_TYPE = 'config_US'
 
 with open('config.yaml') as f:
     config = yaml.safe_load(f)

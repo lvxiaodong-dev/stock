@@ -17,9 +17,11 @@ from strategy.QianKunXian import QianKunXian
 with open('config.yaml') as f:
     config = yaml.safe_load(f)
     
-STOCK_TYPE = config['use']
-class_obj = globals()[config[STOCK_TYPE]['api_class_name']]
-screener = StockScreener(STOCK_TYPE, class_obj)
+# A股 或 美股
+CONFIG_TYPE = 'config_A'
+# CONFIG_TYPE = 'config_US'
+class_obj = globals()[config[CONFIG_TYPE]['api_class_name']]
+screener = StockScreener(CONFIG_TYPE, class_obj)
 
 # 设置选股策略
 # screener.use(DailyGoldenCross('日线金叉', 3))

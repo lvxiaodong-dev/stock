@@ -4,9 +4,11 @@ config_A:
     # 数据库path
     db_path: db/stock.db
     # 股票代码集合path
-    csv_path: csv/cs.csv
+    csv_path: csv/a.csv
     # 下载线程数
     max_workers: 5
+    # 选股模式, 使用db_tables下的其中一类做为选股配置， 可选db_stock_daily, db_stock_{1, 5, 15, 30, 60, 120}_minute
+    mode: db_stock_daily
     db_tables:
         # 股票信息表
         db_stock_info:
@@ -16,12 +18,13 @@ config_A:
         # 股票日历史数据表
         db_stock_daily:
             # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
-            disabled: 1
+            disabled: 0
             table_name: stock_daily_a
             date_range:
                 start_date: 2020-01-01
                 end_date: 2023-10-01
                 today_as_end_date: 1
+                recent_day: 720
         # 股票120分钟历史数据表
         db_stock_120_minute:
             disabled: 1
@@ -57,7 +60,7 @@ config_A:
                 today_as_end_date: 1
                 recent_day: 5
         db_stock_5_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_5_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
@@ -65,7 +68,7 @@ config_A:
                 today_as_end_date: 1
                 recent_day: 0
         db_stock_1_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_1_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
