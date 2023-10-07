@@ -1,47 +1,61 @@
 config_A:
+    # 数据源类， 如果要接入其他数据源， 请实现interfaces/DataApi.py下的接口
     api_class_name: AkShare
+    # 数据库path
     db_path: db/stock.db
-    csv_path: csv/a.csv
+    # 股票代码集合path
+    csv_path: csv/cs.csv
+    # 下载线程数
     max_workers: 5
     db_tables:
+        # 股票信息表
         db_stock_info:
-            disabled: 0
+            # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
+            disabled: 1
             table_name: stock_info_a
+        # 股票日历史数据表
         db_stock_daily:
-            disabled: 0
+            # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
+            disabled: 1
             table_name: stock_daily_a
             date_range:
                 start_date: 2020-01-01
                 end_date: 2023-10-01
                 today_as_end_date: 1
+        # 股票120分钟历史数据表
         db_stock_120_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_120_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 15
+         # 股票60分钟历史数据表
         db_stock_60_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_60_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 10
         db_stock_30_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_30_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 7
         db_stock_15_minute:
-            disabled: 0
+            disabled: 1
             table_name: stock_15_minute_a
             date_range:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 5
         db_stock_5_minute:
             disabled: 0
             table_name: stock_5_minute_a
@@ -49,6 +63,7 @@ config_A:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 0
         db_stock_1_minute:
             disabled: 0
             table_name: stock_1_minute_a
@@ -56,24 +71,75 @@ config_A:
                 start_date: 2023-01-01 00:00:00
                 end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 0
 
 config_US:
     api_class_name: Yahoo
     db_path: db/stock.db
-    csv_path: csv/us_yahoo.csv
+    csv_path: csv/cs.csv
     max_workers: 5
     db_tables:
+        # 股票信息表
+        db_stock_info:
+            # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
+            disabled: 1
+            table_name: stock_info_us
+        # 股票日历史数据表
         db_stock_daily:
+            # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
+            disabled: 1
             table_name: stock_daily_us
             date_range:
                 start_date: 2020-01-01
-                end_date: 2023-08-30
+                end_date: 2023-10-01
                 today_as_end_date: 1
-        db_stock_info:
-            table_name: stock_info_us
+        # 股票120分钟历史数据表
+        db_stock_120_minute:
+            disabled: 1
+            table_name: stock_120_minute_us
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+                recent_day: 15
+         # 股票60分钟历史数据表
+        db_stock_60_minute:
+            disabled: 0
+            table_name: stock_60_minute_us
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+                recent_day: 10
         db_stock_30_minute:
+            disabled: 1
             table_name: stock_30_minute_us
             date_range:
-                start_date: 2020-01-01
-                end_date: 2023-08-30
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
                 today_as_end_date: 1
+                recent_day: 7
+        db_stock_15_minute:
+            disabled: 1
+            table_name: stock_15_minute_us
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+                recent_day: 5
+        db_stock_5_minute:
+            disabled: 1
+            table_name: stock_5_minute_us
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+                recent_day: 4
+        db_stock_1_minute:
+            disabled: 1
+            table_name: stock_1_minute_us
+            date_range:
+                start_date: 2023-01-01 00:00:00
+                end_date: 2023-10-01 15:00:00
+                today_as_end_date: 1
+                recent_day: 3

@@ -1,7 +1,7 @@
 import yaml
 import traceback
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
 
@@ -102,10 +102,15 @@ class DBScreener:
         start_date = db_stock_config['date_range']['start_date']
         end_date = db_stock_config['date_range']['end_date']
         today_as_end_date = db_stock_config['date_range']['today_as_end_date']
+        recent_day = db_stock_config['date_range']['recent_day']
+        today = datetime.now()
         # 使用当前日期做为结束时间
         if today_as_end_date:
-            end_date = datetime.now()
-
+            end_date = today
+        # 最近recent_day天的数据
+        if recent_day:
+            start_date = today - timedelta(days=recent_day)
+            end_date = today
         ### 日历史数据
         print(f'清空{period}分钟历史数据...')
         self.db.drop_table(table_name)
