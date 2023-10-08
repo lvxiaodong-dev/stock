@@ -110,9 +110,9 @@ class DBScreener:
             end_date = today
         ### 日历史数据
         if db_stock_config['drop_table']:
-            logger.info(f'删除{period}历史分钟数据表...')
+            logger.info(f'删除历史{period}分钟数据表...')
             self.db.drop_table(table_name)
-        logger.info(f'创建{period}历史分钟数据表...')
+        logger.info(f'创建历史{period}分钟数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
         self.db.create_index(table_name, 'idx_stock_minute_symbol_date', 'symbol, date')
         # 查询最大时间，增量更新
