@@ -1,3 +1,5 @@
+| 大部分配置都放在了config.yaml文件中，没有A股或美股的概念了， 只有数据源的概念， 数据源是哪个股就获取对应股市的数据，实现统一的接口即可。
+
 ##### 安装依赖
 1. 安装 python3
 2. 安装 pip install akshare mytt numpy pandas retry sqlite ta-lib tqdm yfinance loguru
