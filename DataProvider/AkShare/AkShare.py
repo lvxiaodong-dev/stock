@@ -72,7 +72,7 @@ class AkShare(DataApi):
 
     def read_csv(self, csv_path):
         csv_data = pd.read_csv(csv_path, dtype=str, engine="python")
-        return csv_data['code'].values
+        return csv_data['symbol'].values
     
     def format_daily_string(self, date):
         return date.strftime("%Y%m%d")

@@ -12,8 +12,7 @@ from db.Database import Database
 
 class StockScreener:
 
-    def __init__(self, STOCK_TYPE, DataApi):
-        self.STOCK_TYPE = STOCK_TYPE
+    def __init__(self, DataApi):
         self.provider = DataProvider(DataApi)
         self.config = self.read_config_yaml()
         # 策略名称
@@ -25,8 +24,9 @@ class StockScreener:
 
     # 运行程序
     def run(self):
-        self.db_path = self.config['db_path']
-        self.csv_path = self.config['csv_path']
+        self.data_class = self.config['data_class']
+        self.db_path = f'DataProvider/{self.data_class}/{self.data_class}.db'
+        self.csv_path = f'DataProvider/{self.data_class}/{self.data_class}.csv'
         self.mode = self.config['mode']
         db_stock_config = self.config['db_tables'][self.mode]
         self.table_name = db_stock_config['table_name']
@@ -120,7 +120,7 @@ class StockScreener:
     def read_config_yaml(self):
         with open('config.yaml') as f:
             config = yaml.safe_load(f)
-            return config[self.STOCK_TYPE]
+            return config
     
     # 读CSV文件
     def read_csv(self):

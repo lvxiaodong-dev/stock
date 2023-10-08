@@ -9,15 +9,15 @@ from db.Database import Database
 
 class DBScreener:
 
-    def __init__(self, STOCK_TYPE, DataApi):
-        self.STOCK_TYPE = STOCK_TYPE
+    def __init__(self, DataApi):
         self.provider = DataProvider(DataApi)
         self.config = self.read_config_yaml()
     
     # 运行
     def run(self):
-        self.db_path = self.config['db_path']
-        self.csv_path = self.config['csv_path']
+        self.data_class = self.config['data_class']
+        self.db_path = f'DataProvider/{self.data_class}/{self.data_class}.db'
+        self.csv_path = f'DataProvider/{self.data_class}/{self.data_class}.csv'
         self.max_workers = self.config['max_workers']
         self.stock_symbols = self.provider.read_csv(self.csv_path)
         logger.info('打开数据库连接')
@@ -40,7 +40,7 @@ class DBScreener:
             return
         table_name = db_stock_config['table_name']
         ### 股票信息数据
-        logger.info('清空股票信息数据...')
+        logger.info('删除股票信息表...')
         self.db.drop_table(table_name)
         logger.info('创建股票信息数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, MCAP FLOAT, FCAP FLOAT, TOTSHR FLOAT, FLOSHR FLOAT, INDUSTRY TEXT, UNIQUE (symbol)')
@@ -72,7 +72,7 @@ class DBScreener:
             end_date = today
 
         ### 日历史数据
-        logger.info('清空历史日数据...')
+        logger.info('删除历史日数据表...')
         self.db.drop_table(table_name)
         logger.info('创建历史日数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
@@ -108,7 +108,7 @@ class DBScreener:
             start_date = today - timedelta(days=recent_day)
             end_date = today
         ### 日历史数据
-        logger.info(f'清空{period}历史分钟数据...')
+        logger.info(f'删除{period}历史分钟数据表...')
         self.db.drop_table(table_name)
         logger.info(f'创建{period}历史分钟数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
@@ -129,7 +129,7 @@ class DBScreener:
     def read_config_yaml(self):
         with open('config.yaml') as f:
             config = yaml.safe_load(f)
-            return config[self.STOCK_TYPE]
+            return config
     
     # 读CSV文件
     def read_csv(self):

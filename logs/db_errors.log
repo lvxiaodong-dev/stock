@@ -1,0 +1,54 @@
+argument: ('ETX           ',)
+发生错误：404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v6/finance/quoteSummary/ETX%20%20%20%20%20%20%20%20%20%20%20?modules=financialData&modules=quoteType&modules=defaultKeyStatistics&modules=assetProfile&modules=summaryDetail&ssl=true
+Traceback (most recent call last):
+  File "/Users/lv/work/project/stock/DataProvider/DataProvider.py", line 61, in get_stock_info
+    return self.api.get_stock_info(*args)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/retry/api.py", line 73, in retry_decorator
+    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/retry/api.py", line 33, in __retry_internal
+    return f()
+  File "/Users/lv/work/project/stock/DataProvider/Yahoo/Yahoo.py", line 17, in get_stock_info
+    info = df.info
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/ticker.py", line 142, in info
+    return self.get_info()
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/base.py", line 1678, in get_info
+    data = self._quote.info
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/scrapers/quote.py", line 571, in info
+    self._fetch(self.proxy)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/scrapers/quote.py", line 600, in _fetch
+    result = self._data.get_raw_json(
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/data.py", line 75, in get_raw_json
+    response.raise_for_status()
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v6/finance/quoteSummary/ETX%20%20%20%20%20%20%20%20%20%20%20?modules=financialData&modules=quoteType&modules=defaultKeyStatistics&modules=assetProfile&modules=summaryDetail&ssl=true
+
+argument: ('XPAXU',)
+发生错误：404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v6/finance/quoteSummary/XPAXU?modules=financialData&modules=quoteType&modules=defaultKeyStatistics&modules=assetProfile&modules=summaryDetail&ssl=true
+Traceback (most recent call last):
+  File "/Users/lv/work/project/stock/DataProvider/DataProvider.py", line 61, in get_stock_info
+    return self.api.get_stock_info(*args)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/decorator.py", line 232, in fun
+    return caller(func, *(extras + args), **kw)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/retry/api.py", line 73, in retry_decorator
+    return __retry_internal(partial(f, *args, **kwargs), exceptions, tries, delay, max_delay, backoff, jitter,
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/retry/api.py", line 33, in __retry_internal
+    return f()
+  File "/Users/lv/work/project/stock/DataProvider/Yahoo/Yahoo.py", line 17, in get_stock_info
+    info = df.info
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/ticker.py", line 142, in info
+    return self.get_info()
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/base.py", line 1678, in get_info
+    data = self._quote.info
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/scrapers/quote.py", line 571, in info
+    self._fetch(self.proxy)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/scrapers/quote.py", line 600, in _fetch
+    result = self._data.get_raw_json(
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/yfinance/data.py", line 75, in get_raw_json
+    response.raise_for_status()
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v6/finance/quoteSummary/XPAXU?modules=financialData&modules=quoteType&modules=defaultKeyStatistics&modules=assetProfile&modules=summaryDetail&ssl=true
+
