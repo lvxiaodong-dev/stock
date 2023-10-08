@@ -26,6 +26,7 @@ class DBScreener:
         self.download_minute(120)
         self.download_minute(60)
         self.download_minute(30)
+        self.download_minute(15)
         self.download_minute(5)
         self.download_minute(1)
         logger.info('关闭数据库连接')
@@ -38,8 +39,9 @@ class DBScreener:
             return
         table_name = db_stock_config['table_name']
         ### 股票信息数据
-        logger.info('删除股票信息表...')
-        self.db.drop_table(table_name)
+        if db_stock_config['drop_table']:
+            logger.info('删除股票信息表...')
+            self.db.drop_table(table_name)
         logger.info('创建股票信息数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, MCAP FLOAT, FCAP FLOAT, TOTSHR FLOAT, FLOSHR FLOAT, INDUSTRY TEXT, UNIQUE (symbol)')
         logger.info('创建股票信息数据表索引...')
@@ -70,8 +72,9 @@ class DBScreener:
             end_date = today
 
         ### 日历史数据
-        logger.info('删除历史日数据表...')
-        self.db.drop_table(table_name)
+        if db_stock_config['drop_table']:
+            logger.info('删除历史日数据表...')
+            self.db.drop_table(table_name)
         logger.info('创建历史日数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
         self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
@@ -106,11 +109,12 @@ class DBScreener:
             start_date = today - timedelta(days=recent_day)
             end_date = today
         ### 日历史数据
-        logger.info(f'删除{period}历史分钟数据表...')
-        self.db.drop_table(table_name)
+        if db_stock_config['drop_table']:
+            logger.info(f'删除{period}历史分钟数据表...')
+            self.db.drop_table(table_name)
         logger.info(f'创建{period}历史分钟数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
-        self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
+        self.db.create_index(table_name, 'idx_stock_minute_symbol_date', 'symbol, date')
         # 查询最大时间，增量更新
         max_date = self.db.get_max_date(table_name, 'date')
         if max_date is not None:

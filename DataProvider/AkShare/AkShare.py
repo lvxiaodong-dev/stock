@@ -51,7 +51,7 @@ class AkShare(DataApi):
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def stock_zh_a_hist_min_em(self, symbol, start_date, end_date, period):
-        return ak.stock_zh_a_hist_min_em(symbol=symbol, start_date=start_date, end_date=end_date, period=period, adjust="qfq")
+        return ak.stock_zh_a_hist_min_em(symbol=symbol, start_date=start_date, end_date=end_date, period=str(period), adjust='qfq')
 
     def get_stock_minute_hist(self, symbol, start_date, end_date, period):
         df = self.stock_zh_a_hist_min_em(symbol, start_date, end_date, period)
