@@ -1,6 +1,8 @@
 import yaml
 import traceback
 import pandas as pd
+import libs.util as util
+from loguru import logger
 from datetime import datetime, timedelta
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
@@ -11,37 +13,44 @@ class DBScreener:
         self.STOCK_TYPE = STOCK_TYPE
         self.provider = DataProvider(DataApi)
         self.config = self.read_config_yaml()
-        # 启调试模式
-        self.isDebugger = 0
     
-    # 开启调试模式
-    def debugger(self):
-        self.isDebugger = 1
-
     # 运行
     def run(self):
         self.db_path = self.config['db_path']
         self.csv_path = self.config['csv_path']
         self.max_workers = self.config['max_workers']
         self.stock_symbols = self.provider.read_csv(self.csv_path)
-        print('打开数据库连接')
+        logger.info('打开数据库连接')
         self.db = Database(self.db_path)
         self.db.connect()
-        try:
-            self.download_daily()
-            self.download_stock_info()
-            self.download_minute(120)
-            self.download_minute(60)
-            self.download_minute(30)
-            self.download_minute(5)
-            self.download_minute(1)
-        except Exception as e:
-            if self.isDebugger:
-                traceback.print_exc()
-            else: 
-                print(e);
-        print('关闭数据库连接')
+        self.download_daily()
+        self.download_stock_info()
+        self.download_minute(120)
+        self.download_minute(60)
+        self.download_minute(30)
+        self.download_minute(5)
+        self.download_minute(1)
+        logger.info('关闭数据库连接')
         self.db.disconnect()
+
+    # 下载股票信息
+    def download_stock_info(self):
+        db_stock_config = self.config['db_tables']['db_stock_info']
+        if db_stock_config['disabled']:
+            return
+        table_name = db_stock_config['table_name']
+        ### 股票信息数据
+        logger.info('清空股票信息数据...')
+        self.db.drop_table(table_name)
+        logger.info('创建股票信息数据表...')
+        self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, MCAP FLOAT, FCAP FLOAT, TOTSHR FLOAT, FLOSHR FLOAT, INDUSTRY TEXT, UNIQUE (symbol)')
+        logger.info('创建股票信息数据表索引...')
+        self.db.create_index(table_name, 'idx_stock_daily_symbol', 'symbol')
+        self.provider.download_stock_info(self.stock_symbols, self.max_workers, self.download_stock_info_callback)
+        
+    def download_stock_info_callback(self, data_dict):
+        table_name = self.config['db_tables']['db_stock_info']['table_name']
+        self.db.insert_data(table_name, data_dict)
     
     # 下载日数据
     def download_daily(self):
@@ -63,9 +72,9 @@ class DBScreener:
             end_date = today
 
         ### 日历史数据
-        print('清空日历史数据...')
+        logger.info('清空历史日数据...')
         self.db.drop_table(table_name)
-        print('创建日历史数据表...')
+        logger.info('创建历史日数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
         self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
         # 查询最大时间，增量更新
@@ -79,25 +88,6 @@ class DBScreener:
         table_name = self.config['db_tables']['db_stock_daily']['table_name']
         if len(data_list):
             self.db.insert_multiple_data(table_name, data_list)
-
-    # 下载股票信息
-    def download_stock_info(self):
-        db_stock_config = self.config['db_tables']['db_stock_info']
-        if db_stock_config['disabled']:
-            return
-        table_name = db_stock_config['table_name']
-        ### 股票信息数据
-        print('清空股票信息数据...')
-        self.db.drop_table(table_name)
-        print('创建股票信息数据表...')
-        self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, MCAP FLOAT, FCAP FLOAT, TOTSHR FLOAT, FLOSHR FLOAT, INDUSTRY TEXT, UNIQUE (symbol)')
-        print('创建股票信息数据表索引...')
-        self.db.create_index(table_name, 'idx_stock_daily_symbol', 'symbol')
-        self.provider.download_stock_info(self.stock_symbols, self.max_workers, self.download_stock_info_callback)
-        
-    def download_stock_info_callback(self, data_dict):
-        table_name = self.config['db_tables']['db_stock_info']['table_name']
-        self.db.insert_data(table_name, data_dict)
 
     # 下载30分钟历史数据
     def download_minute(self, period):
@@ -118,9 +108,9 @@ class DBScreener:
             start_date = today - timedelta(days=recent_day)
             end_date = today
         ### 日历史数据
-        print(f'清空{period}分钟历史数据...')
+        logger.info(f'清空{period}历史分钟数据...')
         self.db.drop_table(table_name)
-        print(f'创建{period}分钟历史数据表...')
+        logger.info(f'创建{period}历史分钟数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
         self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
         # 查询最大时间，增量更新

@@ -4,6 +4,7 @@ import traceback
 import pandas as pd
 import numpy as np
 import libs.util as util
+from loguru import logger
 from datetime import datetime, timedelta
 from tqdm import tqdm
 from DataProvider.DataProvider import DataProvider 
@@ -21,8 +22,6 @@ class StockScreener:
         self.strategies = []
         # 选股结果
         self.selected_stocks = []
-         # 是否开启调试模式
-        self.isDebugger = False
 
     # 运行程序
     def run(self):
@@ -52,13 +51,7 @@ class StockScreener:
         self.main()
 
         self.db.disconnect()
-
-        print('下载完成！')
     
-    # 开启调试模式
-    def debugger(self, flag = True):
-        self.isDebugger = flag
-
     # 使用的策略
     def use(self, strategy):
         self.strategies.append(strategy)
@@ -84,6 +77,7 @@ class StockScreener:
     # 找股票
     def find_stock(self, symbol):
         df = self.db.fetch_data(self.table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
+        self.df = df
         if len(df) > 0:
             date = datetime.strptime(df.iloc[-1]['date'], "%Y-%m-%d").date()
             # 时间不符合的不查询，停牌，节假日等情况
@@ -92,7 +86,7 @@ class StockScreener:
                 # 是否可以买
                 is_buy = self.is_buy(condition)
                 if is_buy:
-                    self.isDebugger and print(f'{symbol} 符合策略结果')
+                    logger.debug(f'{symbol} 符合策略结果')
                     self.selected_stocks.append(symbol)
 
     # 打印选股结果
@@ -108,9 +102,9 @@ class StockScreener:
                 os.makedirs(directory)
                 
             np.savetxt(savepath, self.selected_stocks, delimiter=',', fmt='%s')
-            print('选股结果保存成功！' + savepath)
+            logger.info('选股结果保存成功！' + savepath)
         else:
-            print('未找到符合条件的股票，请调整你的策略！')
+            logger.info('未找到符合条件的股票，请调整你的策略！')
 
     # 主程序入口
     def main(self):
@@ -118,10 +112,7 @@ class StockScreener:
             try:
                 self.find_stock(symbol)
             except Exception as e:
-                if self.isDebugger:
-                     traceback.print_exc()
-                else: 
-                    print(e);
+                logger.error(f"argument: {symbol, self.start_date, self.end_date, self.mode}\n发生错误：{e}\n{traceback.format_exc()}")
 
         self.print_stock()
 

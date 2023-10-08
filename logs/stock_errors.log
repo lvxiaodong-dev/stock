@@ -1,0 +1,38 @@
+argument: ('603270', datetime.date(2021, 10, 18), datetime.date(2023, 10, 8), 'db_stock_daily')
+发生错误：index -1 is out of bounds for axis 0 with size 0
+Traceback (most recent call last):
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 113, in main
+    self.find_stock(symbol)
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 85, in find_stock
+    condition = self.exec(df)
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 64, in exec
+    flag = strategy.exec()
+  File "/Users/lv/work/project/stock/strategy/Strategy.py", line 16, in exec
+    result.append(self.find())
+  File "/Users/lv/work/project/stock/strategy/DailyGoldenCross.py", line 18, in find
+    if macd_diff.iat[-1] > macd_dea.iat[-1] and macd_diff.iat[-2] < macd_dea.iat[-2]:
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/pandas/core/indexing.py", line 2440, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/pandas/core/series.py", line 1153, in _get_value
+    return self._values[label]
+IndexError: index -1 is out of bounds for axis 0 with size 0
+
+argument: ('603275', datetime.date(2021, 10, 18), datetime.date(2023, 10, 8), 'db_stock_daily')
+发生错误：index -1 is out of bounds for axis 0 with size 0
+Traceback (most recent call last):
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 113, in main
+    self.find_stock(symbol)
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 85, in find_stock
+    condition = self.exec(df)
+  File "/Users/lv/work/project/stock/screener/StockScreener.py", line 64, in exec
+    flag = strategy.exec()
+  File "/Users/lv/work/project/stock/strategy/Strategy.py", line 16, in exec
+    result.append(self.find())
+  File "/Users/lv/work/project/stock/strategy/DailyGoldenCross.py", line 18, in find
+    if macd_diff.iat[-1] > macd_dea.iat[-1] and macd_diff.iat[-2] < macd_dea.iat[-2]:
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/pandas/core/indexing.py", line 2440, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+  File "/Users/lv/anaconda3/envs/stock/lib/python3.10/site-packages/pandas/core/series.py", line 1153, in _get_value
+    return self._values[label]
+IndexError: index -1 is out of bounds for axis 0 with size 0
+

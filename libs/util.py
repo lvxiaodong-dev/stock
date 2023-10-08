@@ -1,6 +1,8 @@
 
 import os
 import numpy as np
+from loguru import logger
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 
@@ -24,3 +26,7 @@ def save_array_with_directory(file_path, array):
     
     # 保存数组到文件
     np.savetxt(file_path, array)
+
+def log_error_with_time(message):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.error(f"{current_time} | {message}")
