@@ -78,21 +78,18 @@ class StockScreener:
         df = self.db.fetch_data(self.table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
         self.df = df
         if len(df) > 0:
-            date = datetime.strptime(df.iloc[-1]['date'], "%Y-%m-%d").date()
-            # 时间不符合的不查询，停牌，节假日等情况
-            if date <= self.end_date:
-                condition = self.exec(df)
-                # 是否可以买
-                is_buy = self.is_buy(condition)
-                if is_buy:
-                    logger.debug(f'{symbol} 符合策略结果')
-                    self.selected_stocks.append(symbol)
+            condition = self.exec(df)
+            # 是否可以买
+            is_buy = self.is_buy(condition)
+            if is_buy:
+                logger.debug(f'{symbol} 符合策略结果')
+                self.selected_stocks.append(symbol)
 
     # 打印选股结果
     def print_stock(self):
         if len(self.selected_stocks) > 0:
             strategyName = '_'.join(self.getStrategyName())
-            savepath = f'dist/{datetime.now()}_{strategyName}.txt'
+            savepath = f'dist/{self.mode}/{datetime.now()}_{strategyName}.txt'
             # 获取目录路径
             directory = os.path.dirname(savepath)
             
