@@ -2,6 +2,7 @@ import sys
 import yaml
 from loguru import logger
 from DataProvider.AkShare.AkShare import AkShare
+from DataProvider.AkShare_A_ETF.AkShare_A_ETF import AkShare_A_ETF
 from DataProvider.Yahoo.Yahoo import Yahoo
 from screener.DBScreener import DBScreener
 

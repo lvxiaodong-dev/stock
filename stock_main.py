@@ -3,6 +3,7 @@ import yaml
 from loguru import logger
 from screener.StockScreener import StockScreener
 from DataProvider.AkShare.AkShare import AkShare
+from DataProvider.AkShare_A_ETF.AkShare_A_ETF import AkShare_A_ETF
 from DataProvider.Yahoo.Yahoo import Yahoo
 from strategy.DailyGoldenCross import DailyGoldenCross
 from strategy.WeeklyGoldenCross import WeeklyGoldenCross
@@ -27,9 +28,9 @@ class_obj = globals()[config['data_class']]
 screener = StockScreener(class_obj)
 
 # 设置选股策略
-screener.use(DailyGoldenCross('日线金叉', 3))
+screener.use(DailyGoldenCross('日线金叉', 1))
 # screener.use(HongLiBeiLiWang('弘历背离王', 3))
-# screener.use(HeiMa('黑马', 3))
+# screener.use(HeiMa('黑马', 1))
 # screener.use(JiuHouNiuYi('九牛转一', 3))
 # screener.use(LiuCaiShenLongGreen('六彩神龙绿色', 3))
 # screener.use(FaCaiXian('发财线', 3))
