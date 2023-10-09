@@ -2,7 +2,7 @@
 
 ##### 安装依赖
 1. 安装 python3
-2. 安装 pip install akshare mytt numpy pandas retry sqlite ta-lib tqdm yfinance loguru
+2. 安装 pip install akshare mytt numpy pandas retry ta-lib tqdm yfinance loguru pyyaml
 
 ##### 下载数据
 1. 打开 config.yaml 文件， 修改其中的 data_class , 可选值如下:
