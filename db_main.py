@@ -1,19 +1,21 @@
+import os, sys
 import yaml
-from DataProvider.A.AkShare import AkShare
-from DataProvider.US.Yahoo import Yahoo
+from loguru import logger
+from DataProvider.AkShare.AkShare import AkShare
+from DataProvider.AkShare_A_ETF.AkShare_A_ETF import AkShare_A_ETF
+from DataProvider.Yahoo.Yahoo import Yahoo
 from screener.DBScreener import DBScreener
-
-import os,sys
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+logger.remove() # 移除默认的处理器
+logger.add(sys.stderr, level='INFO', format="{message}") # 新增一个往stderr输出的处理器,只输出INFO级别
+logger.add("logs/db_errors.log", level="ERROR", format="{time:YYYY-MM-DD HH:mm:ss}\n{message}")
+
 with open('config.yaml') as f:
     config = yaml.safe_load(f)
-    
-STOCK_TYPE = config['use']
-class_obj = globals()[config[STOCK_TYPE]['api_class_name']]
-screener = DBScreener(STOCK_TYPE, class_obj)
+class_obj = globals()[config['data_class']]
+screener = DBScreener(class_obj)
 
-screener.debugger()
 screener.run()
-print('下载完成！')
+logger.info('下载完成！')

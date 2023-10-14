@@ -1,82 +1,170 @@
-import sys
+import sys, time
 import yaml
-import traceback
 import pandas as pd
-from datetime import datetime
+from loguru import logger
+from datetime import datetime, timedelta
 from DataProvider.DataProvider import DataProvider 
 from db.Database import Database
 
 class DBScreener:
 
-    def __init__(self, STOCK_TYPE, DataApi):
-        self.STOCK_TYPE = STOCK_TYPE
+    def __init__(self, DataApi):
         self.provider = DataProvider(DataApi)
         self.config = self.read_config_yaml()
-        # 是否开启调试模式
-        self.isDebugger = False
     
-    # 开启调试模式
-    def debugger(self, flag = True):
-        self.isDebugger = flag
-
     # 运行
     def run(self):
-        try:
-            self.download_daily()
-        except Exception as e:
-            if self.isDebugger:
-                traceback.print_exc()
-            else: 
-                print(e);
-    
-    # 下载日数据
-    def download_daily(self):
-        self.db_path = self.config['db_path']
-        self.db_stock_daily_table_name = self.config['db_stock_daily_table_name']
-        self.csv_path = self.config['csv_path']
-        self.start_date = self.config['start_date']
-        self.end_date = self.config['end_date']
-        self.today_as_end_date = self.config['today_as_end_date']
-        # 使用当前日期做为结束时间
-        if self.today_as_end_date:
-            self.end_date = datetime.now().date()
-
+        self.data_class = self.config['data_class']
+        if "csv" in self.config:
+            self.csv_path = f'DataProvider/{self.data_class}/{self.config["csv"]}.csv'
+            self.db_path = f'DataProvider/{self.data_class}/{self.config["csv"]}.db'
+        else:
+            self.csv_path = f'DataProvider/{self.data_class}/{self.data_class}.csv'
+            self.db_path = f'DataProvider/{self.data_class}/{self.data_class}.db'
         self.max_workers = self.config['max_workers']
         if (len(sys.argv) < 2):
-            stock_symbols = self.provider.read_csv(self.csv_path)
+            self.stock_symbols = self.provider.read_csv(self.csv_path)
         else:
             symbols=[]
             for i in range(len(sys.argv)-1):
                 symbols.append(sys.argv[i+1])
-            stock_symbols = pd.Series(symbols)
-
+            self.stock_symbols = pd.Series(symbols)
+        logger.info('打开数据库连接')
         self.db = Database(self.db_path)
         self.db.connect()
+        self.download_stock_info()
+        self.download_daily()
+        self.download_minute(120)
+        self.download_minute(60)
+        self.download_minute(30)
+        self.download_minute(15)
+        self.download_minute(5)
+        self.download_minute(1)
+        logger.info('关闭数据库连接')
+        self.db.disconnect()
 
-        self.db.drop_table(self.db_stock_daily_table_name)
+    # 下载股票信息
+    def download_stock_info(self):
+        db_stock_config = self.config['db_tables']['db_stock_info']
+        if db_stock_config['disabled']:
+            return
+        table_name = db_stock_config['table_name']
+        ### 股票信息数据
+        if db_stock_config['drop_table']:
+            logger.info('删除股票信息表...')
+            self.db.drop_table(table_name)
+        logger.info('创建股票信息数据表...')
+        self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, MCAP FLOAT, FCAP FLOAT, TOTSHR FLOAT, FLOSHR FLOAT, INDUSTRY TEXT, UNIQUE (symbol)')
+        logger.info('创建股票信息数据表索引...')
+        self.db.create_index(table_name, 'idx_stock_daily_symbol', 'symbol')
+        self.provider.download_stock_info(self.stock_symbols, self.max_workers, self.download_stock_info_callback)
+        
+    def download_stock_info_callback(self, data_dict):
+        table_name = self.config['db_tables']['db_stock_info']['table_name']
+        self.db.insert_data(table_name, data_dict)
+    
+    # 下载日数据
+    def download_daily(self):
+        db_stock_config = self.config['db_tables']['db_stock_daily']
+        if db_stock_config['disabled']:
+            return
+        table_name = db_stock_config['table_name']
+        start_date = db_stock_config['date_range']['start_date']
+        end_date = db_stock_config['date_range']['end_date']
+        today_as_end_date = db_stock_config['date_range']['today_as_end_date']
+        recent_day = db_stock_config['date_range']['recent_day']
+        today = datetime.now().date()
+        # 使用当前日期做为结束时间
+        if today_as_end_date:
+            end_date = today
+        # 最近recent_day天的数据
+        if recent_day:
+            start_date = today - timedelta(days=recent_day)
+            end_date = today
 
-        self.db.create_table(self.db_stock_daily_table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, UNIQUE (symbol, date)')
-
-        self.db.create_index(self.db_stock_daily_table_name, 'idx_stock_daily_code_date', 'symbol, date')
+        ### 日历史数据
+        if db_stock_config['drop_table']:
+            logger.info('删除历史日数据表...')
+            self.db.drop_table(table_name)
+        logger.info('创建历史日数据表...')
+        self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
+        self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
 
         # 查询最大时间，增量更新
-        max_date = self.db.get_max_date(self.db_stock_daily_table_name, 'date')
+        max_date = None
+        if (len(sys.argv) < 2):
+            max_date = self.db.get_max_date(table_name, 'date')
         if max_date is not None:
-            self.start_date = datetime.strptime(max_date, "%Y-%m-%d").date()
+            start_date = datetime.strptime(max_date, "%Y-%m-%d").date()
+        if self.max_workers == 1:
+            i = 0
+            total = len(self.stock_symbols)
+            failures=[]
+            for symbol in self.stock_symbols:
+                i = i + 1
+                print(f"{i}/{total} {symbol}")
+                result = self.provider.get_stock_daily_hist(symbol, self.provider.format_daily_string(start_date), self.provider.format_daily_string(end_date))
+                if len(result) == 0:
+                    failures.append(symbol)
+                self.download_stock_daily_callback(result)
+                #好像说每两次申请之间最好有1秒的间隔，不然很容易被Yahoo封IP
+                time.sleep(2)
 
-        self.provider.download_stock_daily_data(stock_symbols, self.start_date, self.end_date, self. max_workers, self.download_stock_daily_callback)
-        self.db.disconnect()
+            print(f"Failed downloading {failures}")
+            df = pd.DataFrame(failures, columns=['Symbol'])
+            df.to_csv(f'DataProvider/{self.data_class}/{self.data_class}_failures.csv', index=False)
+            return
+        else:
+            self.provider.download_stock_daily_data(self.stock_symbols, start_date, end_date, self.max_workers, self.download_stock_daily_callback)
         
     # 获取到数据之后，插入到本地数据库
     def download_stock_daily_callback(self, data_list):
+        table_name = self.config['db_tables']['db_stock_daily']['table_name']
         if len(data_list):
-            self.db.insert_multiple_data(self.db_stock_daily_table_name, data_list)
+            self.db.insert_multiple_data(table_name, data_list)
+
+    # 下载30分钟历史数据
+    def download_minute(self, period):
+        db_stock_config = self.config['db_tables'][f'db_stock_{period}_minute']
+        if db_stock_config['disabled']:
+            return
+        table_name = db_stock_config['table_name']
+        start_date = db_stock_config['date_range']['start_date']
+        end_date = db_stock_config['date_range']['end_date']
+        today_as_end_date = db_stock_config['date_range']['today_as_end_date']
+        recent_day = db_stock_config['date_range']['recent_day']
+        today = datetime.now()
+        # 使用当前日期做为结束时间
+        if today_as_end_date:
+            end_date = today
+        # 最近recent_day天的数据
+        if recent_day:
+            start_date = today - timedelta(days=recent_day)
+            end_date = today
+        ### 日历史数据
+        if db_stock_config['drop_table']:
+            logger.info(f'删除历史{period}分钟数据表...')
+            self.db.drop_table(table_name)
+        logger.info(f'创建历史{period}分钟数据表...')
+        self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
+        self.db.create_index(table_name, 'idx_stock_minute_symbol_date', 'symbol, date')
+        # 查询最大时间，增量更新
+        max_date = self.db.get_max_date(table_name, 'date')
+        if max_date is not None:
+            start_date = datetime.strptime(max_date, "%Y-%m-%d %H:%M:%S")
+        self.provider.download_stock_minute_hist(self.stock_symbols, start_date, end_date, period, self.max_workers, self.download_stock_minute_callback)
+        
+    # 获取到数据之后，插入到本地数据库
+    def download_stock_minute_callback(self, data_list, period):
+        table_name = self.config['db_tables'][f'db_stock_{period}_minute']['table_name']
+        if len(data_list):
+            self.db.insert_multiple_data(table_name, data_list)
 
     # 读配置文件
     def read_config_yaml(self):
         with open('config.yaml') as f:
             config = yaml.safe_load(f)
-            return config[self.STOCK_TYPE]
+            return config
     
     # 读CSV文件
     def read_csv(self):

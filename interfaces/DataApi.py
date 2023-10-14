@@ -19,6 +19,10 @@ class DataApi(ABC):
         pass
 
     @abstractmethod
-    def format_date_string(self, date):
+    def format_daily_string(self, date):
+        pass
+
+    @abstractmethod
+    def format_minute_string(self, date):
         pass
     
