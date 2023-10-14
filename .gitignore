@@ -4,3 +4,4 @@ libs/__pycache__
 tmp/*
 failure.csv
 *.log
+dist/

@@ -1,4 +1,4 @@
-import os,sys
+import os,sys,importlib
 import yaml
 import traceback
 import pandas as pd
@@ -60,6 +60,16 @@ class StockScreener:
     # 使用的策略
     def use(self, strategy):
         self.strategies.append(strategy)
+
+    # 使用的策略
+    def use(self, strategyName, description="", recent_day=1):
+        if description == "":
+            description = strategyName
+        pkg = importlib.import_module(f"strategy.{strategyName}")
+        #klass=globals()[f"{strategyName}.{strategyName}"]
+        #klass=globals()[pkg[0]]
+        klass = getattr(pkg, strategyName)
+        self.strategies.append(klass(description, recent_day))
 
     # 执行选股
     def exec(self, df):
