@@ -29,11 +29,11 @@ class AkShare(DataApi):
         return data_dict
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
-    def stock_zh_a_hist(self, symbol, start_date, end_date):
-        return ak.stock_zh_a_hist(symbol=symbol, start_date=start_date, end_date=end_date, period='daily', adjust="qfq", timeout=3)
+    def stock_zh_a_hist(self, symbol, start_date, end_date, period):
+        return ak.stock_zh_a_hist(symbol=symbol, start_date=start_date, end_date=end_date, period=period, adjust="hfq", timeout=3)
 
-    def get_stock_daily_hist(self, symbol, start_date, end_date):
-        df = self.stock_zh_a_hist(symbol, start_date, end_date)
+    def get_stock_daily_hist(self, symbol, start_date, end_date, period):
+        df = self.stock_zh_a_hist(symbol, start_date, end_date, period)
         data_list = []
         for index, row in df.iterrows():
             data_item = {
@@ -51,7 +51,7 @@ class AkShare(DataApi):
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def stock_zh_a_hist_min_em(self, symbol, start_date, end_date, period):
-        return ak.stock_zh_a_hist_min_em(symbol=symbol, start_date=start_date, end_date=end_date, period=str(period), adjust='qfq')
+        return ak.stock_zh_a_hist_min_em(symbol=symbol, start_date=start_date, end_date=end_date, period=str(period), adjust='hfq')
 
     def get_stock_minute_hist(self, symbol, start_date, end_date, period):
         df = self.stock_zh_a_hist_min_em(symbol, start_date, end_date, period)

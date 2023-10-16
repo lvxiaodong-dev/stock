@@ -72,6 +72,13 @@ class Database:
         df = pd.DataFrame(results, columns=[column[0] for column in self.cursor.description])
         return df
     
+    def fetch_firstrow_data(self, table_name, columns='*', condition=None):
+        row = None
+        df = self.fetch_data(table_name, columns, condition)
+        if len(df):
+            row = df.iloc[0]
+        return row
+    
     def get_max_date(self, table_name, date_column):
         # 获取最大日期
         query = f"SELECT MAX({date_column}) FROM {table_name}"

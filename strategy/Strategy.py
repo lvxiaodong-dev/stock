@@ -7,15 +7,13 @@ class Strategy:
         self.name = name
         self.recent_day = recent_day
 
-    def set_df(self, df):
-        self.df = df
-
-    def exec(self):
+    def exec(self, **kwargs):
         result = []
         for _ in range(self.recent_day):
-            result.append(self.find())
-            self.pop()
+            result.append(self.find(**kwargs))
+            kwargs['df'] = self.pop(kwargs['df'])
         return any(result)
 
-    def pop(self):
-        self.df = self.df.iloc[:-1]
+    def pop(self, df):
+        df = df.iloc[:-1]
+        return df

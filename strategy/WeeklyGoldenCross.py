@@ -9,9 +9,8 @@ class WeeklyGoldenCross(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             CLOSE = df.CLOSE
 
             # 计算周线MACD

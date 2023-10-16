@@ -1,4 +1,4 @@
-import os
+import os,sys,importlib
 import yaml
 import traceback
 import pandas as pd
@@ -6,7 +6,7 @@ import numpy as np
 from loguru import logger
 from datetime import datetime, timedelta
 from tqdm import tqdm
-from DataProvider.DataProvider import DataProvider 
+from data_provider.DataProvider import DataProvider 
 from db.Database import Database
 
 class StockScreener:
@@ -24,43 +24,29 @@ class StockScreener:
     # 运行程序
     def run(self):
         self.data_class = self.config['data_class']
-        self.db_path = f'DataProvider/{self.data_class}/{self.data_class}.db'
-        self.csv_path = f'DataProvider/{self.data_class}/{self.data_class}.csv'
-        self.mode = self.config['mode']
-        db_stock_config = self.config['db_tables'][self.mode]
-        self.table_name = db_stock_config['table_name']
-        self.start_date = db_stock_config['date_range']['start_date']
-        self.end_date = db_stock_config['date_range']['end_date']
-        self.today_as_end_date = db_stock_config['date_range']['today_as_end_date']
-        self.recent_day = db_stock_config['date_range']['recent_day']
-        today = datetime.now().date()
-        # 使用当前日期做为结束时间
-        if self.today_as_end_date:
-            current_date = datetime.now().date()
-            self.end_date = current_date
-         # 最近recent_day天的数据
-        if self.recent_day:
-            self.start_date = today - timedelta(days=self.recent_day)
-            self.end_date = today
-        
+        self.db_path = f'data_provider/{self.data_class}/{self.data_class}.db'
+        self.csv_path = f'data_provider/{self.data_class}/{self.data_class}.csv'
         self.stock_symbols = self.provider.read_csv(self.csv_path)
 
         self.db = Database(self.db_path)
         self.db.connect()
-        self.main()
+        self.main(stock_symbols=self.stock_symbols)
 
         self.db.disconnect()
     
     # 使用的策略
-    def use(self, strategy):
-        self.strategies.append(strategy)
+    def use(self, strategyName, description="", recent_day=1):
+        if description == "":
+            description = strategyName
+        pkg = importlib.import_module(f"strategy.{strategyName}")
+        klass = getattr(pkg, strategyName)
+        self.strategies.append(klass(description, recent_day))
 
     # 执行选股
-    def exec(self, df):
+    def exec(self, **kwargs):
         condition = []
         for strategy in self.strategies:
-            strategy.set_df(df)
-            flag = strategy.exec()
+            flag = strategy.exec(**kwargs)
             condition.append(flag)
         
         return condition
@@ -74,22 +60,19 @@ class StockScreener:
         return [strategy.name for strategy in self.strategies]
     
     # 找股票
-    def find_stock(self, symbol):
-        df = self.db.fetch_data(self.table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, self.start_date.strftime('%Y-%m-%d'), self.end_date.strftime('%Y-%m-%d')))
-        self.df = df
-        if len(df) > 0:
-            condition = self.exec(df)
-            # 是否可以买
-            is_buy = self.is_buy(condition)
-            if is_buy:
-                logger.debug(f'{symbol} 符合策略结果')
-                self.selected_stocks.append(symbol)
+    def find_stock(self, symbol, **kwargs):
+        condition = self.exec(**kwargs)
+        # 是否可以买
+        is_buy = self.is_buy(condition)
+        if is_buy:
+            logger.debug(f'{symbol} 符合策略结果')
+            self.selected_stocks.append(symbol)
 
     # 打印选股结果
     def print_stock(self):
         if len(self.selected_stocks) > 0:
             strategyName = '_'.join(self.getStrategyName())
-            savepath = f'dist/{self.mode}/{datetime.now()}_{strategyName}.txt'
+            savepath = f'dist/{self.period}/{datetime.now()}_{strategyName}.txt'
             # 获取目录路径
             directory = os.path.dirname(savepath)
             
@@ -103,12 +86,34 @@ class StockScreener:
             logger.info('未找到符合条件的股票，请调整你的策略！')
 
     # 主程序入口
-    def main(self):
-        for symbol in tqdm(self.stock_symbols, desc='Processing'):
+    def main(self, **kwargs):
+        stock_symbols = kwargs['stock_symbols']
+        self.period = self.config['period']
+
+        for symbol in tqdm(stock_symbols, desc='Processing'):
             try:
-                self.find_stock(symbol)
+                db_stock_config = self.config['db_tables'][f'db_stock_{self.period}']
+                table_name = db_stock_config['table_name']
+                start_date = db_stock_config['date_range']['start_date']
+                end_date = db_stock_config['date_range']['end_date']
+                today_as_end_date = db_stock_config['date_range']['today_as_end_date']
+                recent_day = db_stock_config['date_range']['recent_day']
+                today = datetime.now().date()
+                # 使用当前日期做为结束时间
+                if today_as_end_date:
+                    current_date = datetime.now().date()
+                    end_date = current_date
+                # 最近recent_day天的数据
+                if recent_day:
+                    start_date = today - timedelta(days=recent_day)
+                    end_date = today
+
+                df = self.db.fetch_data(table_name, '*', "symbol = '{}' AND date >= '{}' AND date <= '{}' ORDER BY date ASC".format(symbol, start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+                info = self.db.fetch_firstrow_data('stock_info', '*', "symbol = '{}'".format(symbol))
+                self.find_stock(symbol, df=df, info=info)
             except Exception as e:
-                logger.error(f"argument: {symbol, self.start_date, self.end_date, self.mode}\n发生错误：{e}\n{traceback.format_exc()}")
+                logger.error(f"argument: {symbol}\n发生错误：{e}\n{traceback.format_exc()}")
+
 
         self.print_stock()
 

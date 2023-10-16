@@ -2,7 +2,7 @@ import yaml
 import pandas as pd
 from loguru import logger
 from datetime import datetime, timedelta
-from DataProvider.DataProvider import DataProvider 
+from data_provider.DataProvider import DataProvider 
 from db.Database import Database
 
 class DBScreener:
@@ -14,21 +14,23 @@ class DBScreener:
     # 运行
     def run(self):
         self.data_class = self.config['data_class']
-        self.db_path = f'DataProvider/{self.data_class}/{self.data_class}.db'
-        self.csv_path = f'DataProvider/{self.data_class}/{self.data_class}.csv'
+        self.db_path = f'data_provider/{self.data_class}/{self.data_class}.db'
+        self.csv_path = f'data_provider/{self.data_class}/{self.data_class}.csv'
         self.max_workers = self.config['max_workers']
         self.stock_symbols = self.provider.read_csv(self.csv_path)
         logger.info('打开数据库连接')
         self.db = Database(self.db_path)
         self.db.connect()
         self.download_stock_info()
-        self.download_daily()
-        self.download_minute(120)
-        self.download_minute(60)
-        self.download_minute(30)
-        self.download_minute(15)
-        self.download_minute(5)
-        self.download_minute(1)
+        self.download_daily('monthly')
+        self.download_daily('weekly')
+        self.download_daily('daily')
+        self.download_minute('120')
+        self.download_minute('60')
+        self.download_minute('30')
+        self.download_minute('15')
+        self.download_minute('5')
+        self.download_minute('1')
         logger.info('关闭数据库连接')
         self.db.disconnect()
 
@@ -53,8 +55,8 @@ class DBScreener:
         self.db.insert_data(table_name, data_dict)
     
     # 下载日数据
-    def download_daily(self):
-        db_stock_config = self.config['db_tables']['db_stock_daily']
+    def download_daily(self, period):
+        db_stock_config = self.config['db_tables'][f'db_stock_{period}']
         if db_stock_config['disabled']:
             return
         table_name = db_stock_config['table_name']
@@ -73,26 +75,26 @@ class DBScreener:
 
         ### 日历史数据
         if db_stock_config['drop_table']:
-            logger.info('删除历史日数据表...')
+            logger.info(f'删除历史{period}数据表...')
             self.db.drop_table(table_name)
-        logger.info('创建历史日数据表...')
+        logger.info(f'创建历史{period}数据表...')
         self.db.create_table(table_name, 'id INTEGER PRIMARY KEY AUTOINCREMENT, symbol TEXT NOT NULL, date DATETIME NOT NULL, OPEN FLOAT, CLOSE FLOAT, HIGH FLOAT, LOW FLOAT, VOL INTEGER, AMOUNT INTEGER, UNIQUE (symbol, date)')
         self.db.create_index(table_name, 'idx_stock_daily_symbol_date', 'symbol, date')
         # 查询最大时间，增量更新
         max_date = self.db.get_max_date(table_name, 'date')
         if max_date is not None:
             start_date = datetime.strptime(max_date, "%Y-%m-%d").date()
-        self.provider.download_stock_daily_data(self.stock_symbols, start_date, end_date, self.max_workers, self.download_stock_daily_callback)
+        self.provider.download_stock_daily_data(self.stock_symbols, start_date, end_date, period, self.max_workers, self.download_stock_daily_callback)
         
     # 获取到数据之后，插入到本地数据库
-    def download_stock_daily_callback(self, data_list):
-        table_name = self.config['db_tables']['db_stock_daily']['table_name']
+    def download_stock_daily_callback(self, data_list, period):
+        table_name = self.config['db_tables'][f'db_stock_{period}']['table_name']
         if len(data_list):
             self.db.insert_multiple_data(table_name, data_list)
 
     # 下载30分钟历史数据
     def download_minute(self, period):
-        db_stock_config = self.config['db_tables'][f'db_stock_{period}_minute']
+        db_stock_config = self.config['db_tables'][f'db_stock_{period}']
         if db_stock_config['disabled']:
             return
         table_name = db_stock_config['table_name']
@@ -123,7 +125,7 @@ class DBScreener:
         
     # 获取到数据之后，插入到本地数据库
     def download_stock_minute_callback(self, data_list, period):
-        table_name = self.config['db_tables'][f'db_stock_{period}_minute']['table_name']
+        table_name = self.config['db_tables'][f'db_stock_{period}']['table_name']
         if len(data_list):
             self.db.insert_multiple_data(table_name, data_list)
 

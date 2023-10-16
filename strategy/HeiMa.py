@@ -12,12 +12,11 @@ class HeiMa(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def exec(self):
-        return self.find()
+    def exec(self, **kwargs):
+        return self.find(**kwargs)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             day = self.recent_day
             # 向量化计算指标
             OPEN = df.OPEN
