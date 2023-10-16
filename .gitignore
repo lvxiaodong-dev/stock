@@ -1,3 +1,4 @@
 __pycache__
 libs/__pycache__
-db/stock.db
+*.db
+*.log

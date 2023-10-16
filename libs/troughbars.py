@@ -25,19 +25,19 @@ def GetFirstVaildIndex(data):
     
     return count
 
-def ZIG(self, K, N):
+def ZIG(df, K, N):
     ZIG_STATE_START = 0
     ZIG_STATE_RISE = 1
     ZIG_STATE_FALL = 2
 
     if K == 0:
-        K = self.OPEN()
+        K = df.OPEN
     elif K == 1:
-        K = self.HIGH()
+        K = df.HIGH
     elif K == 2:
-        K = self.LOW()
+        K = df.LOW
     elif K == 3:
-        K = self.CLOSE()
+        K = df.CLOSE
     else:
         print('传参有误')
         pass
