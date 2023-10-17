@@ -5,17 +5,6 @@ from screener.StockScreener import StockScreener
 from data_provider.AkShare.AkShare import AkShare
 from data_provider.AkShare_A_ETF.AkShare_A_ETF import AkShare_A_ETF
 from data_provider.Yahoo.Yahoo import Yahoo
-from strategy.DailyGoldenCross import DailyGoldenCross
-from strategy.WeeklyGoldenCross import WeeklyGoldenCross
-from strategy.HongLiBeiLiWang import HongLiBeiLiWang
-from strategy.HeiMa import HeiMa
-from strategy.JiuHouNiuYi import JiuHouNiuYi
-from strategy.LiuCaiShenLong import LiuCaiShenLong
-from strategy.LiuCaiShenLongGreen import LiuCaiShenLongGreen
-from strategy.FaCaiXian import FaCaiXian
-from strategy.QueKouJiuZhuan_JianCang import QueKouJiuZhuan_JianCang
-from strategy.GuBiDaoShu_JinChang import GuBiDaoShu_JinChang
-from strategy.QianKunXian import QianKunXian
 
 logger.remove() # 移除默认的处理器
 logger.add(sys.stderr, level='DEBUG', format="{message}") # 新增一个往stderr输出的处理器,只输出(INFO, DEBUG)级别
