@@ -27,6 +27,7 @@ screener = StockScreener(class_obj)
 # screener.use('QueKouJiuZhuan_JianCang', '缺口九转-建仓信号', 1)
 # screener.use('GuBiDaoShu_JinChang', '顾比倒数-进场', 1)
 # screener.use('QianKunXian', '乾坤线-进场', 1)
+screener.use('HongLi_JinChang', '弘历进场', 1)
 screener.run()
 
 logger.info('Done!')

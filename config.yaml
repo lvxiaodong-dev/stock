@@ -1,7 +1,7 @@
 # 数据源类， 如果要接入其他数据源， 请实现interfaces/DataApi.py下的接口, 已支持的有AkShare, Yahoo, AkShare_A_ETF
 data_class: AkShare
 # 下载线程数
-max_workers: 5
+max_workers: 10
 # 选股周期,可选 monthly, weekly, daily, 1, 5, 15, 30, 60, 120
 period: daily
 db_tables:
