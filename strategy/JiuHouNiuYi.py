@@ -2,13 +2,14 @@ import pandas as pd
 from strategy.Strategy import Strategy
 
 # 九后牛一
+
+
 class JiuHouNiuYi(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             CLOSE = df.CLOSE
 
             # B1判断收盘价是否低于4日前收盘价

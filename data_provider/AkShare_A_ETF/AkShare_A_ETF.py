@@ -12,11 +12,11 @@ class AkShare_A_ETF(DataApi):
         pass
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
-    def fund_etf_hist_em(self, symbol, start_date, end_date):
-        return ak.fund_etf_hist_em(symbol=symbol, start_date=start_date, end_date=end_date, period='daily', adjust="qfq")
+    def fund_etf_hist_em(self, symbol, start_date, end_date, period):
+        return ak.fund_etf_hist_em(symbol=symbol, start_date=start_date, end_date=end_date, period=period, adjust="qfq")
 
-    def get_stock_daily_hist(self, symbol, start_date, end_date):
-        df = self.fund_etf_hist_em(symbol, start_date, end_date)
+    def get_stock_daily_hist(self, symbol, start_date, end_date, period):
+        df = self.fund_etf_hist_em(symbol, start_date, end_date, period)
         data_list = []
         for index, row in df.iterrows():
             data_item = {

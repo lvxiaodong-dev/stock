@@ -11,9 +11,8 @@ class LiuCaiShenLongGreen(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             CLOSE = df.CLOSE
 
             N = 3

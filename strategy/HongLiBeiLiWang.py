@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from MyTT import EMA, REF, FORCAST, BARSLAST
 from strategy.Strategy import Strategy
 
@@ -9,9 +10,8 @@ class HongLiBeiLiWang(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             # 向量化计算指标
             CLOSE = df.CLOSE
             A1 = FORCAST(EMA(CLOSE, 5), 6)
@@ -23,14 +23,14 @@ class HongLiBeiLiWang(Strategy):
             TOWERC = EMA(B, 2)
 
             FLAG = TOWERC >= REF(TOWERC, 1)
-            FLAG1 = pd.Series(REF(FLAG, 1)).bfill()
-            COND1 = FLAG & (~FLAG1)
+            FLAG1 = REF(FLAG, 1)
+            COND1 = np.logical_and(FLAG, FLAG1)
             PERIOD_COND1 = BARSLAST(REF(COND1, 1))
             COND2 = (CLOSE.iat[-1] < REF(CLOSE, PERIOD_COND1[-1] + 1)[-1]
                      ) & (TOWERC[-1] > REF(TOWERC, PERIOD_COND1[-1] + 1)[-1])
 
             # 记录结果
-            if COND1.iat[-1] & COND2:
+            if COND1[-1] & COND2:
                 return True
         except IndexError:
             return False

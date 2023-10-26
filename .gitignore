@@ -5,3 +5,5 @@ tmp/*
 failure.csv
 *.log
 dist/
+*.log
+temp/*

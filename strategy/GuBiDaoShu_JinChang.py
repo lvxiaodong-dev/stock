@@ -12,9 +12,8 @@ class GuBiDaoShu_JinChang(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def find(self):
+    def find(self, df, info):
         try:
-            df = self.df
             # 向量化计算指标
             CLOSE = df.CLOSE
             HIGH = df.HIGH

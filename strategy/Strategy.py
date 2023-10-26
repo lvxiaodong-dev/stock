@@ -7,18 +7,27 @@ class Strategy:
         self.name = name
         self.recent_day = recent_day
 
-    def set_df(self, df):
-        self.df = df
-
-    def exec(self):
+    def exec(self, **kwargs):
         result = []
         for _ in range(self.recent_day):
-            result.append(self.find())
-            self.pop()
+            result.append(self.find(**kwargs))
+            kwargs['df'] = self.pop(kwargs['df'])
         return any(result)
 
-    def pop(self):
-        self.df = self.df.iloc[:-1]
+    def pop(self, df):
+        df = df.iloc[:-1]
+        return df
 
-    def YahooDf(self):
-        return self.df.rename(columns={'OPEN': 'Open', 'CLOSE':'Close', 'HIGH' : 'High', 'LOW': 'Low', 'VOL':'Volume'})
+    def findSell(self, df, info):
+        print(f"WARNING: no sell stragtegy for {self.name}")
+        return False
+
+    def execSell(self, **kwargs):
+        result = []
+        for _ in range(self.recent_day):
+            result.append(self.findSell(**kwargs))
+            kwargs['df'] = self.pop(kwargs['df'])
+        return any(result)
+
+    def YahooDf(self, df):
+        return df.rename(columns={'OPEN': 'Open', 'CLOSE':'Close', 'HIGH' : 'High', 'LOW': 'Low', 'VOL':'Volume'})
