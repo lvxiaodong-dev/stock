@@ -27,7 +27,7 @@ db_tables:
             recent_day: 0
     db_stock_daily:
         disabled: 0
-        drop_table: 1
+        drop_table: 0
         table_name: stock_daily
         date_range:
             start_date: 2020-01-01

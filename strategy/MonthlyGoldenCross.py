@@ -1,3 +1,4 @@
+
 import pandas as pd
 import talib as ta
 from strategy.Strategy import Strategy
@@ -5,7 +6,7 @@ from strategy.Strategy import Strategy
 # 周线金叉
 
 
-class WeeklyGoldenCross(Strategy):
+class MonthlyGoldenCross(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
@@ -15,7 +16,7 @@ class WeeklyGoldenCross(Strategy):
 
             # 计算周线MACD
             macd_diff, macd_dea, macd_bar = ta.MACD(
-                CLOSE, fastperiod=26, slowperiod=52, signalperiod=13)
+                CLOSE, fastperiod=12, slowperiod=26, signalperiod=9)
             macd_diff = macd_diff.dropna()
             macd_dea = macd_dea.dropna()
 
