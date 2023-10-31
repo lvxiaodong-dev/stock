@@ -28,7 +28,7 @@ db_tables:
     # 股票周历史数据表
     db_stock_weekly:
         # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
-        disabled: 1
+        disabled: 0
         drop_table: 1
         table_name: stock_weekly
         date_range:
@@ -41,7 +41,7 @@ db_tables:
     # 股票日历史数据表
     db_stock_daily:
         # 是否禁用， 禁用后执行db_mian.py不下载该表的数据
-        disabled: 1
+        disabled: 0
         drop_table: 1
         table_name: stock_daily
         date_range:

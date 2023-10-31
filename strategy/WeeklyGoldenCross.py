@@ -14,13 +14,13 @@ class WeeklyGoldenCross(Strategy):
             CLOSE = df.CLOSE
 
             # 计算周线MACD
-            wk_macd_diff, wk_macd_dea, wk_macd_bar = ta.MACD(
+            macd_diff, macd_dea, macd_bar = ta.MACD(
                 CLOSE, fastperiod=26, slowperiod=52, signalperiod=13)
-            wk_macd_diff = wk_macd_diff.dropna()
-            wk_macd_dea = wk_macd_dea.dropna()
+            macd_diff = macd_diff.dropna()
+            macd_dea = macd_dea.dropna()
 
             # 判断金叉
-            if wk_macd_diff.iat[-1] > wk_macd_dea.iat[-1] and wk_macd_diff.iat[-2] < wk_macd_dea.iat[-2]:
+            if macd_diff.iat[-1] > macd_dea.iat[-1] and macd_diff.iat[-2] < macd_dea.iat[-2]:
                 return True
         except IndexError:
             return False
