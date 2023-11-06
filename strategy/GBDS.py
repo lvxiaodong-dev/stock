@@ -66,28 +66,25 @@ class GBDS(Strategy):
     def __init__(self, *args):
         super().__init__(*args)
 
-    def exec(self):
-        return self.find()
-
-    def find(self):
+    def find(self, df, info):
         # Find lowest "Low" index
         start_index = 2  # Replace with your desired start index
         end_index = 15  # Replace with your desired end index
-        df = self.df.rename(columns=str.capitalize)
+        df1 = df.rename(columns=str.capitalize)
         # if 'OPEN' in self.df.columns:
         #     df = self.df.rename(columns={'OPEN': 'Open', 'CLOSE':'Close', 'HIGH' : 'High', 'LOW': 'Low'})
         
-        lowest_low, lowest_low_index = find_lowest_low_and_index(df, start_index, end_index) # lowest_low_index is negative
+        lowest_low, lowest_low_index = find_lowest_low_and_index(df1, start_index, end_index) # lowest_low_index is negative
             #print(f"lowest_low_index = {lowest_low_index}; end_index = {end_index}")
         
         if end_index - lowest_low_index  < 3:
             return False #skip because not enough length for GuBi breakout
     
         # GuBi breakout price and its index
-        breakout_price, breakout_index = find_ascending_red_candles(df, -lowest_low_index, -end_index)
+        breakout_price, breakout_index = find_ascending_red_candles(df1, -lowest_low_index, -end_index)
         #print(f"breakout_price = {breakout_price}, breakout_index = {breakout_index}")
         
-        if breakout_price is not None and check_gubi_breakout(df, breakout_price, lowest_low_index):
+        if breakout_price is not None and check_gubi_breakout(df1, breakout_price, lowest_low_index):
             return True
 
         return False

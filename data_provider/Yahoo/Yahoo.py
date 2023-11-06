@@ -2,8 +2,9 @@ import retry
 import warnings
 import pandas as pd
 import yfinance as yf
-from datetime import datetime
+import os
 from interfaces.DataApi import DataApi
+from libs.MyTA import MyTA as mta
 
 warnings.filterwarnings("ignore", category=FutureWarning) 
 
@@ -35,13 +36,26 @@ class Yahoo(DataApi):
 
     @retry.retry(exceptions=Exception, tries=3, delay=1)
     def yf_download(self, symbol, interval, start_date, end_date):
-        return yf.download(symbol, interval=interval, start=start_date, end=end_date, progress=False, timeout=3, threads=False)
+        #if (mta.small_market_value(symbol)):
+        #    return pd.DataFrame()
+        try:
+            return yf.download(symbol, interval=interval, start=start_date, end=end_date, progress=False, timeout=3, threads=False)
+        except Exception as ex:
+            print(f"Downloading {symbol} Failed: {str(ex)}")
+            return pd.DataFrame()
 
     def get_stock_daily_hist(self, symbol, start_date, end_date):
-        df = self.yf_download(symbol, '1d', start_date, end_date)
+        df = self.yf_download(symbol, '1d', pd.Timestamp(start_date), pd.Timestamp(end_date))
         data_list = []
         if df.empty:
+            failureFile=f"{os.path.dirname(os.path.abspath(__file__))}/failures.txt"
+            print(f"ERROR: failed to download {symbol}")
+            with open(failureFile,'a') as fh:
+                fh.write(f"{symbol}\n")
             return data_list
+        # if mta.small_volume(df):
+        #     print(f"INFO: skip {symbol} due to small volume")
+        #     return data_list
         for index, row in df.iterrows():
             data_item = {
                 'symbol': symbol,
@@ -56,7 +70,7 @@ class Yahoo(DataApi):
         return data_list
 
     def get_stock_minute_hist(self, symbol, start_date, end_date, period):
-        df = self.yf_download(symbol, f'{period}m',start_date, end_date)
+        df = self.yf_download(symbol, f'{period}m',pd.Timestamp(start_date), pd.Timestamp(end_date))
         data_list = []
         if df.empty:
             return data_list

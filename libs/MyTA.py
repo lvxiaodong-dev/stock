@@ -130,7 +130,8 @@ class MyTA:
         try:
             market_cap = yf.Ticker(code).fast_info.market_cap
             #print(stock, market_cap)
-            if market_cap < 1000000000:
+            #100 亿
+            if market_cap < 10000000000:
                 #print(F"Skip {code} since its cap {market_cap} is small")
                 return True
         except Exception as e:

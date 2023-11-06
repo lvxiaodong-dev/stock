@@ -86,16 +86,16 @@ class Database:
         result = self.cursor.fetchone()
         max_date = result[0]
         return max_date
-    
+
     def get_symbols(self, table_name, symbol_column):
         query_sql = f"SELECT DISTINCT {symbol_column} FROM {table_name}"
         # 执行查询语句
         # print(F"execting {query_sql}")
-        a = self.connection.execute(query_sql)
+        self.cursor.execute(query_sql)
 
         # 获取查询结果
         results = [] 
-        rs = a.fetchall()
+        rs = self.cursor.fetchall()
         for item in rs:
             results.append(item[0])
         return results

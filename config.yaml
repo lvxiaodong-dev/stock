@@ -1,5 +1,5 @@
 data_class: Yahoo
-max_workers: 1
+max_workers: 3
 csv: Yahoo
 period: daily
 db_tables:

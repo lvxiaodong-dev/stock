@@ -123,7 +123,7 @@ class DBScreener:
     # 获取到数据之后，插入到本地数据库
     def download_stock_daily_callback(self, data_list, period):
         table_name = self.config['db_tables'][f'db_stock_{period}']['table_name']
-        if len(data_list):
+        if data_list is not None and len(data_list):
             self.db.insert_multiple_data(table_name, data_list)
 
     # 下载30分钟历史数据

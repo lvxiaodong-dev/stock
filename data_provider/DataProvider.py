@@ -24,7 +24,7 @@ class DataProvider:
         for symbol in stock_symbols:
             tasks.append({
                 'function': self.get_stock_daily_hist,
-                'args': [symbol, self.api.format_daily_string(start_date), self.api.format_daily_string(end_date), period],
+                'args': [symbol, self.api.format_daily_string(start_date), self.api.format_daily_string(end_date)],
                 'kwargs': {}
             })
         def __callback(result):

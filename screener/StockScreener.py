@@ -27,7 +27,11 @@ class StockScreener:
         if 'isBuy' in self.config:
             self.isBuy = self.config['isBuy'] == 1
         self.data_class = self.config['data_class']
-        self.db_path = f'data_provider/{self.data_class}/{self.data_class}.db'
+        if "db" in self.config:
+            #for example, stock screen for my holding list; db might be different
+            self.db_path = f'data_provider/{self.data_class}/{self.config["db"]}.db'
+        else:
+            self.db_path = f'data_provider/{self.data_class}/{self.data_class}.db'
         self.csv_path = f'data_provider/{self.data_class}/{self.data_class}.csv'
         #self.stock_symbols = self.provider.read_csv(self.csv_path)
         self.db = Database(self.db_path)
@@ -67,7 +71,7 @@ class StockScreener:
         return condition
     
     # 是否所有策略都符合条件
-    def is_buy(self, condition):
+    def is_meet(self, condition):
         return all(condition)
     
     # 获取指标名称
@@ -80,9 +84,9 @@ class StockScreener:
     # 找股票
     def find_stock(self, symbol, **kwargs):
         condition = self.exec(**kwargs)
-        # 是否可以买
-        is_buy = self.is_buy(condition)
-        if is_buy:
+        # 是否可以买或者卖
+        is_meet = self.is_meet(condition)
+        if is_meet:
             logger.debug(f'{symbol} 符合策略结果')
             self.selected_stocks.append(symbol)
 
