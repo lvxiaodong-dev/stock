@@ -1,5 +1,5 @@
 import pandas as pd
-import talib
+import numpy as np
 
 # 父类
 class Strategy:
@@ -28,6 +28,14 @@ class Strategy:
             result.append(self.findSell(**kwargs))
             kwargs['df'] = self.pop(kwargs['df'])
         return any(result)
+
+    def backTest(self, df, info):
+        print(f"WARNING: no backTestfor {self.name}")
+        arr = np.full(df.size, False)
+        return arr, arr
+
+    def execBackTest(self, **kwargs):
+        return self.backTest(**kwargs)
 
     def YahooDf(self, df):
         return df.rename(columns={'OPEN': 'Open', 'CLOSE':'Close', 'HIGH' : 'High', 'LOW': 'Low', 'VOL':'Volume'})
