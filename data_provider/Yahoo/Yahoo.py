@@ -48,7 +48,7 @@ class Yahoo(DataApi):
         df = self.yf_download(symbol, '1d', pd.Timestamp(start_date), pd.Timestamp(end_date))
         data_list = []
         if df.empty:
-            failureFile=f"{os.path.dirname(os.path.abspath(__file__))}/failures.txt"
+            failureFile=f"{os.path.dirname(os.path.abspath(__file__))}/failures.csv"
             print(f"ERROR: failed to download {symbol}")
             with open(failureFile,'a') as fh:
                 fh.write(f"{symbol}\n")

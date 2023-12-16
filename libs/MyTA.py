@@ -1,5 +1,114 @@
 import yfinance as yf
 
+# N周期前的M周期内的第T个最小值到当前周期的周期数.
+# 用法:FINDLOWBARS(VAR,N,M,T):VAR在N日前的M天内第T个最低价到当前周期的周期数.
+
+#https://raw.githubusercontent.com/jones2000/HQChart/c0d7f75a85e91380d6e396e72ba9bff15776fadc/wechathqchart/umychart.complier.wechat.js
+def FINDLOWBARS(data, n, m, t):
+    count = len(data)
+    result = [10000] * count
+    values = [None] * count
+    for i in range(count - 1, -1, -1):
+        aryValue = []
+        for j in range(n, m):
+            index = i - j
+            if index < 0:
+                break
+            item = data[index]
+            aryValue.append({"Value": item, "Period": j})
+        if len(aryValue) > 0:
+            aryValue.sort(key=lambda x: x["Value"])
+            index = t - 1 if t > 0 else 0
+            index = min(index, len(aryValue) - 1)
+            result[i] = aryValue[index]["Period"]
+            values[i] = aryValue[index]["Value"]
+    return result, values
+
+    #N周期前的M周期内的第T个最小值.
+    #用法:FINDLOW(VAR,N,M,T):VAR在N日前的M天内第T个最低价
+def FINDLOW(data,n,m,t):
+    count = len(data)
+    result = [10000] * count
+    
+    for i in range(count - 1, -1, -1):
+        aryValue=[]
+        for j in range(n,m):
+            index=i-j
+            if index<0:
+                break
+            item=data[index]
+            aryValue.append(item)
+
+        if len(aryValue) > 0:
+            aryValue.sort()
+            index=t-1
+            if index<0:
+                index=0
+            elif index>=len(aryValue):
+                index=len(aryValue)-1
+            result[i]=aryValue[index]
+
+    return result
+
+#N周期前的M周期内的第T个最大值.
+#用法:FINDHIGH(VAR,N,M,T):VAR在N日前的M天内第T个最高价
+def FINDHIGH(data, n, m, t):
+    count = len(data)
+    result = [0] * count
+
+    for i in range(count - 1, -1, -1):
+        ary_value = []
+        for j in range(n, m):
+            index = i - j
+            if index < 0:
+                break
+            item = data[index]
+            ary_value.append(item)
+
+        if len(ary_value) > 0:
+            ary_value.sort(reverse=True)
+            index = t - 1
+            if index < 0:
+                index = 0
+            elif index >= len(ary_value):
+                index = len(ary_value) - 1
+            result[i] = ary_value[index]
+
+    return result
+
+# https://raw.githubusercontent.com/jones2000/HQChart/c0d7f75a85e91380d6e396e72ba9bff15776fadc/wechathqchart/umychart.complier.wechat.js
+# LAST(X,A,B):持续存在.
+# 用法:
+# LAST(CLOSE>OPEN,10,5) 
+# 表示从前10日到前5日内一直阳线
+# 若A为0,表示从第一天开始,B为0,表示到最后日止
+def LAST(data, n, n2):
+    result = [False] * len(data)
+    if n2 <= 0:
+        n2 = len(data) - 1
+    if n2 > n:
+        return result
+
+    day = 0
+    for i in range(len(data)):
+        day = 0
+        start = i - n
+        end = i - n2
+        if start < 0 or end < 0:
+            continue
+
+        for j in range(start, len(data)):
+            if j > end:
+                break
+            day += 1
+            if not data[j]:
+                break
+
+        if day == end - start + 1:
+            result[i] = True
+
+    return result
+
 class MyTA:
     # Find trading Amount
     @staticmethod

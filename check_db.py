@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # 执行查询语句
     # print(F"execting {query_sql}")
     #res = cursor.executemany(query_sql, (sys.argv[1]))
-
+    print("**** stock_daily ****")
     res = cursor.execute(f'SELECT * FROM stock_daily WHERE symbol = "{sys.argv[1]}" ORDER BY date limit 1')
     result = res.fetchall()
     print(result)
@@ -33,6 +33,16 @@ if __name__ == '__main__':
     res = cursor.execute(f'SELECT * FROM stock_daily WHERE symbol = "{sys.argv[1]}" ORDER BY date DESC limit 1')
     result = res.fetchall()
     print(result)
+
+    print("**** stock_weekly ****")
+    res = cursor.execute(f'SELECT * FROM stock_weekly WHERE symbol = "{sys.argv[1]}" ORDER BY date limit 1')
+    result = res.fetchall()
+    print(result)
+
+    res = cursor.execute(f'SELECT * FROM stock_weekly WHERE symbol = "{sys.argv[1]}" ORDER BY date DESC limit 1')
+    result = res.fetchall()
+    print(result)
+
     cursor.close()
     conn.close()
     

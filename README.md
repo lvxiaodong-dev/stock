@@ -85,7 +85,7 @@ class KDJ(Strategy):
     
     ......
     
-    def backTest(self, df, info):
+    def transactions(self, df, info):
         J=self.JVal(df, info)
         Buy=CROSS(J, 0)
         Sell=CROSS(100, J)
@@ -97,27 +97,32 @@ class KDJ(Strategy):
 #### 问与答
 
 如果你看到有股票下载失败，改变config.yaml 如下：
-config_US:
-    api_class_name: Yahoo
-    csv_path: Yahoo_failure
 
-再次运行 python db_main.py
-拷贝 Yahoo_failure.db to Yahoo1.db
+把data_provider\Yahoo\Yahoo.csv 改名比如 Yahoo.csv.ori 
+把data_provider\Yahoo\Failures.csv 改名为 Yahoo.csv; 并且 第一行 加 Symbol
+config.yaml 中，比如db_stock_daily： drop_table: 0
 
-如果你还看到有股票下载失败，改变config.yaml 如下：
+再运行一次 db_main.py
+删掉data_provider\Yahoo\Yahoo.csv
+把原来的改名的data_provider\Yahoo\Yahoo.csv.ori 改回 Yahoo.csv
+循环直到没有错误
 
-再次运行 python db_main.py
-拷贝 Yahoo_failure.db to Yahoo2.db
+如果只是少数股票不行，更简单弥补, 比如如果AAPL下载失败
+```
+config.yaml 中，比如db_stock_daily： drop_table: 0
+python db_main.py AAPL
 
-and so on
 
-最后创建目录temp
-把 data_provider/Yahoo/Yahoo.db, Yahoo1.db Yahoo2.db ... Yahoon.db 拷贝到 temp
-运行 python merge_db.py
+可以同时下载daily and weekly
+config.yaml
+db_stock_weekly:
+    disabled:0
+db_stock_daily:
+    disabled:0
+period: weekly 就是周线选股
 
-Merging tmp/Yahoo1.db into tmp/Yahoo.db
-Merging tmp/Yahoo2.db into tmp/Yahoo.db
-...
-Merging tmp/Yahoon.db into tmp/Yahoo.db
+```
 
-然后把合并的tmp/Yahoo.db 拷贝到 data_provider/Yahoo
+#### Notes
+如何实现获利盘COST、WINNER函数编写
+https://bigquant.com/wiki/doc/costwinner-o9aYUY6Jwq

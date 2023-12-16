@@ -67,7 +67,7 @@ class StockScreener:
         sell = None
         for strategy in self.strategies:
             if self.backTest:
-                b, s =strategy.execBackTest(**kwargs)
+                b, s =strategy.transactions(**kwargs)
                 if buy is None:
                     buy = b
                 else:
